@@ -5,6 +5,9 @@ import sys
 print("Start")
 # https://pythonhosted.org/pyserial/tools.html#serial.tools.list_ports.ListPortInfo
 
+
+encoding_str = "utf-8"
+
 ports = serial.tools.list_ports.comports()
 
 print(ports)
@@ -47,9 +50,10 @@ if ser.is_open:
                 print(f"-1 {rl_utf8[-1]}")
                 print(f"-2 {rl_utf8[-2]}")
                 print(f"-3 {rl_utf8[-3]}")
-                ret_str = bytes("привет мир\n", "ascii")
-                # cp855 / cp866 / cp1251 / iso8859_5 / utf-8
-                print("len", len(ret_str))
+                gen_str = "привет мир\n"
+                ret_str = bytes(gen_str, encoding_str)
+                print("len gen_str", len(gen_str))
+                print("len ret_str", len(ret_str))
                 print("sys.getsizeof", sys.getsizeof(ret_str))
                 ser.write(ret_str)  # not more 16 bytes
                 # break
