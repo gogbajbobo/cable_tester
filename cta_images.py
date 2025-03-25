@@ -26,7 +26,7 @@ def find_images(self: CableTesterApplication):
     return image_paths
 
 
-def load_and_resize_image(self: CableTesterApplication, image_path, width, height):
+def load_and_resize_image(image_path, width, height):
     """Загружает и изменяет размер изображения"""
     # from PIL import Image
 

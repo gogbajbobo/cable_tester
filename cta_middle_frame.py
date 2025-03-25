@@ -29,35 +29,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         img_height = 150
 
         self.image_references = [None] * len(image_paths)
-
-        # Загружаем и отображаем изображения
-        for i, img_path in enumerate(image_paths):
-            try:
-                # Загружаем изображение
-                pil_img = load_and_resize_image(self, img_path, img_width, img_height)
-                if pil_img:
-                    tk_img = ImageTk.PhotoImage(pil_img)
-                    self.image_references.append(tk_img)  # Сохраняем ссылку
-
-                    # Вычисляем позицию
-                    x_pos = i * img_width
-
-                    # Отображаем изображение
-                    images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
-
-                    # Добавляем подпись (имя файла)
-                    file_name = os.path.basename(img_path)
-                    images_canvas.create_text(
-                        x_pos + img_width // 2,
-                        img_height - 10,
-                        text=file_name,
-                        fill="black",
-                        font=("Arial", 8),
-                        anchor="s",
-                    )
-
-            except Exception as e:
-                self.log(f"Error loading image {img_path}: {str(e)}")
+        create_images(self, images_canvas, image_paths, img_width, img_height)
 
         # Обновляем размер canvas, чтобы вместить все изображения
         images_canvas.config(scrollregion=images_canvas.bbox("all"))
@@ -79,37 +51,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
             # Пересчитываем размеры
             new_img_width = min(150, event.width // max(1, len(image_paths)))
-
-            # Перерисовываем изображения
-            for i, img_path in enumerate(image_paths):
-                try:
-                    # Загружаем и изменяем размер изображения
-                    pil_img = load_and_resize_image(
-                        self, img_path, new_img_width, img_height
-                    )
-                    tk_img = ImageTk.PhotoImage(pil_img)
-
-                    self.image_references[i] = tk_img  # Обновляем ссылку
-
-                    # Вычисляем позицию
-                    x_pos = i * new_img_width
-
-                    # Отображаем изображение
-                    images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
-
-                    # Добавляем подпись
-                    file_name = os.path.basename(img_path)
-                    images_canvas.create_text(
-                        x_pos + new_img_width // 2,
-                        img_height - 10,
-                        text=file_name,
-                        fill="black",
-                        font=("Arial", 8),
-                        anchor="s",
-                    )
-
-                except Exception as e:
-                    self.log(f"Error resizing image {img_path}: {str(e)}")
+            create_images(self, images_canvas, image_paths, new_img_width, img_height)
 
     # Привязываем обработчик
     images_canvas.bind("<Configure>", on_canvas_resize)
@@ -148,3 +90,39 @@ def update_data_view(self: CableTesterApplication, received, table_data):
     items = self.data_tree.get_children()
     if len(items) > 100:  # Keep only the last 100 entries
         self.data_tree.delete(items[0])
+
+
+def create_images(
+    self: CableTesterApplication,
+    images_canvas: tk.Canvas,
+    image_paths,
+    img_width,
+    img_height,
+):
+    for i, img_path in enumerate(image_paths):
+        try:
+            # Загружаем изображение
+            pil_img = load_and_resize_image(img_path, img_width, img_height)
+            if pil_img:
+                tk_img = ImageTk.PhotoImage(pil_img)
+                self.image_references[i] = tk_img  # Обновляем ссылку
+
+                # Вычисляем позицию
+                x_pos = i * img_width
+
+                # Отображаем изображение
+                images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
+
+                # Добавляем подпись (имя файла)
+                file_name = os.path.basename(img_path)
+                images_canvas.create_text(
+                    x_pos + img_width // 2,
+                    img_height - 10,
+                    text=file_name,
+                    fill="black",
+                    font=("Arial", 8),
+                    anchor="s",
+                )
+
+        except Exception as e:
+            self.log(f"Error loading image {img_path}: {str(e)}")
