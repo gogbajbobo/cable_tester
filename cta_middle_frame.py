@@ -135,12 +135,6 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     scrollbar.grid(row=2, column=1, sticky="ns")
     self.data_tree.configure(yscrollcommand=scrollbar.set)
 
-    # Configure grid weights for middle frame
-    frame.grid_columnconfigure(0, weight=1)
-    frame.grid_rowconfigure(
-        2, weight=1
-    )  # Изменено с 1 на 2, так как добавили строку с изображениями
-
 
 def update_data_view(self: CableTesterApplication, received, table_data):
     """Update the middle frame with received and corresponding table data"""

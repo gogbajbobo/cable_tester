@@ -36,11 +36,18 @@ def create_layout(self: CableTesterApplication):
     main_paned.sash_place(0, int(total_width * 0.2), 0)
     right_paned.sash_place(0, int(total_width * 0.5), 0)
 
-    # Left Frame - Control Panel
-    setup_left_frame(self, left_frame)
+    # Setup Frames
+    setup_left_frame(self, left_frame)  # Left Frame - Control Panel
+    setup_middle_frame(self, middle_frame)  # Middle Frame - Data View
+    setup_right_frame(self, right_frame)  # Right Frame - System Information
 
-    # Middle Frame - Data View
-    setup_middle_frame(self, middle_frame)
+    # Configure grid weights
+    left_frame.grid_columnconfigure(0, weight=1)
 
-    # Right Frame - System Information
-    setup_right_frame(self, right_frame)
+    middle_frame.grid_columnconfigure(0, weight=1)
+    middle_frame.grid_rowconfigure(
+        2, weight=1
+    )  # Изменено с 1 на 2, так как добавили строку с изображениями
+
+    right_frame.grid_columnconfigure(0, weight=1)
+    right_frame.grid_rowconfigure(0, weight=1)

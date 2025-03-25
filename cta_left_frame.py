@@ -54,9 +54,6 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         row=9, column=0, padx=5, pady=5, sticky="ew"
     )
 
-    # Configure grid weights for left frame
-    frame.grid_columnconfigure(0, weight=1)
-
     # Update initial ports and tables lists
     self.root.after(0, _update_tables_list)
     self.root.after(0, _update_ports_list)
