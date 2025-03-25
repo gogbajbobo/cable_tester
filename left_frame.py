@@ -1,18 +1,25 @@
 from tkinter import ttk
 
 from app import CableTesterApplication
+from tables import update_tables_list, on_table_selected
+
+
+def test_func():
+    print("test_func")
 
 
 def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     # Tables section
     ttk.Label(frame, text="Tables:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
-    ttk.Button(frame, text="Update Tables List", command=self.update_tables_list).grid(
-        row=1, column=0, padx=5, pady=5, sticky="ew"
-    )
+    ttk.Button(
+        frame, text="Update Tables List", command=lambda: update_tables_list(self)
+    ).grid(row=1, column=0, padx=5, pady=5, sticky="ew")
     self.tables_combobox = ttk.Combobox(frame, textvariable=self.selected_table)
     self.tables_combobox.grid(row=2, column=0, padx=5, pady=5, sticky="ew")
     # Привязываем обработчик события выбора
-    self.tables_combobox.bind("<<ComboboxSelected>>", self.on_table_selected)
+    self.tables_combobox.bind(
+        "<<ComboboxSelected>>", lambda event: on_table_selected(self, event)
+    )
 
     # COM Ports section
     ttk.Label(frame, text="COM Ports:").grid(
@@ -42,3 +49,5 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     # Configure grid weights for left frame
     frame.grid_columnconfigure(0, weight=1)
+
+    self.root.after(0, lambda: update_tables_list(self))

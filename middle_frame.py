@@ -4,6 +4,7 @@ import os
 from PIL import ImageTk
 
 from app import CableTesterApplication
+from images import find_images, load_and_resize_image
 
 
 def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
@@ -17,10 +18,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     # Список путей к изображениям (замените на свои пути)
     # Можно добавить поиск изображений в директории
-    image_paths = self.find_images()
-
-    # # Хранилище для ссылок на изображения (чтобы избежать сборки мусора)
-    # self.image_references: list[ImageTk.PhotoImage | None] = []
+    image_paths = find_images(self)
 
     # Загрузка и отображение изображений
     if image_paths:
@@ -36,7 +34,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         for i, img_path in enumerate(image_paths):
             try:
                 # Загружаем изображение
-                pil_img = self.load_and_resize_image(img_path, img_width, img_height)
+                pil_img = load_and_resize_image(self, img_path, img_width, img_height)
                 if pil_img:
                     tk_img = ImageTk.PhotoImage(pil_img)
                     self.image_references.append(tk_img)  # Сохраняем ссылку
@@ -86,8 +84,8 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
             for i, img_path in enumerate(image_paths):
                 try:
                     # Загружаем и изменяем размер изображения
-                    pil_img = self.load_and_resize_image(
-                        img_path, new_img_width, img_height
+                    pil_img = load_and_resize_image(
+                        self, img_path, new_img_width, img_height
                     )
                     tk_img = ImageTk.PhotoImage(pil_img)
 
