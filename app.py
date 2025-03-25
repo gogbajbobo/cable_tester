@@ -7,6 +7,7 @@ import time
 import os
 import pandas as pd
 from datetime import datetime
+from PIL import ImageTk, Image
 
 DATA_PATH = os.path.join(os.path.curdir, "data")
 
@@ -114,10 +115,120 @@ class COMPortApplication:
         frame.grid_columnconfigure(0, weight=1)
 
     def setup_middle_frame(self, frame):
+        # Создаем фрейм для изображений вверху
+        images_frame = ttk.Frame(frame)
+        images_frame.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
 
-        # Data view section
+        # Создаем Canvas для размещения изображений
+        images_canvas = tk.Canvas(images_frame, height=150)
+        images_canvas.pack(fill="x", expand=True)
+
+        # Список путей к изображениям (замените на свои пути)
+        # Можно добавить поиск изображений в директории
+        image_paths = self.find_images()
+
+        # Хранилище для ссылок на изображения (чтобы избежать сборки мусора)
+        self.image_references: list[ImageTk.PhotoImage | None] = []
+
+        # Загрузка и отображение изображений
+        if image_paths:
+            # Вычисляем размер для каждого изображения
+            img_width = min(
+                150, (images_canvas.winfo_width() or 800) // max(1, len(image_paths))
+            )
+            img_height = 150
+
+            self.image_references = [None] * len(image_paths)
+
+            # Загружаем и отображаем изображения
+            for i, img_path in enumerate(image_paths):
+                try:
+                    # Загружаем изображение
+                    pil_img = self.load_and_resize_image(
+                        img_path, img_width, img_height
+                    )
+                    if pil_img:
+                        tk_img = ImageTk.PhotoImage(pil_img)
+                        self.image_references.append(tk_img)  # Сохраняем ссылку
+
+                        # Вычисляем позицию
+                        x_pos = i * img_width
+
+                        # Отображаем изображение
+                        images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
+
+                        # Добавляем подпись (имя файла)
+                        file_name = os.path.basename(img_path)
+                        images_canvas.create_text(
+                            x_pos + img_width // 2,
+                            img_height - 10,
+                            text=file_name,
+                            fill="black",
+                            font=("Arial", 8),
+                            anchor="s",
+                        )
+
+                except Exception as e:
+                    self.log(f"Error loading image {img_path}: {str(e)}")
+
+            # Обновляем размер canvas, чтобы вместить все изображения
+            images_canvas.config(scrollregion=images_canvas.bbox("all"))
+        else:
+            # Если изображений нет, показываем сообщение
+            images_canvas.create_text(
+                images_canvas.winfo_width() // 2,
+                75,
+                text="No images found",
+                fill="gray",
+                font=("Arial", 12),
+            )
+
+        # Обработчик изменения размера
+        def on_canvas_resize(event):
+            if image_paths:
+                # Очищаем canvas
+                images_canvas.delete("all")
+
+                # Пересчитываем размеры
+                new_img_width = min(150, event.width // max(1, len(image_paths)))
+
+                # Перерисовываем изображения
+                for i, img_path in enumerate(image_paths):
+                    try:
+                        # Загружаем и изменяем размер изображения
+                        pil_img = self.load_and_resize_image(
+                            img_path, new_img_width, img_height
+                        )
+                        tk_img = ImageTk.PhotoImage(pil_img)
+
+                        self.image_references[i] = tk_img  # Обновляем ссылку
+
+                        # Вычисляем позицию
+                        x_pos = i * new_img_width
+
+                        # Отображаем изображение
+                        images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
+
+                        # Добавляем подпись
+                        file_name = os.path.basename(img_path)
+                        images_canvas.create_text(
+                            x_pos + new_img_width // 2,
+                            img_height - 10,
+                            text=file_name,
+                            fill="black",
+                            font=("Arial", 8),
+                            anchor="s",
+                        )
+
+                    except Exception as e:
+                        self.log(f"Error resizing image {img_path}: {str(e)}")
+
+        # Привязываем обработчик
+        images_canvas.bind("<Configure>", on_canvas_resize)
+
+        # Data view section with header
         ttk.Label(frame, text="Received Data and Corresponding Table Data:").grid(
-            row=0, column=0, padx=5, pady=5, sticky="w"
+            row=1, column=0, padx=5, pady=5, sticky="w"
         )
 
         # Create Treeview for data display
@@ -129,18 +240,76 @@ class COMPortApplication:
             self.data_tree.heading(col, text=col)
             self.data_tree.column(col, width=150)
 
-        self.data_tree.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
+        self.data_tree.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
 
         # Add scrollbar
         scrollbar = ttk.Scrollbar(
             frame, orient="vertical", command=self.data_tree.yview
         )
-        scrollbar.grid(row=1, column=1, sticky="ns")
+        scrollbar.grid(row=2, column=1, sticky="ns")
         self.data_tree.configure(yscrollcommand=scrollbar.set)
 
         # Configure grid weights for middle frame
         frame.grid_columnconfigure(0, weight=1)
-        frame.grid_rowconfigure(1, weight=1)
+        frame.grid_rowconfigure(
+            2, weight=1
+        )  # Изменено с 1 на 2, так как добавили строку с изображениями
+
+    def find_images(self):
+        """Ищет изображения в текущей директории"""
+        image_paths = []
+
+        # Расширения файлов изображений, которые мы ищем
+        image_extensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp"]
+
+        # Ищем изображения в текущей директории
+        for file in os.listdir(DATA_PATH):
+            if any(file.lower().endswith(ext) for ext in image_extensions):
+                image_paths.append(os.path.join(DATA_PATH, file))
+
+        # Ограничиваем количество изображений (опционально)
+        if len(image_paths) > 5:
+            self.log(f"Found {len(image_paths)} images, showing first 5")
+            image_paths = image_paths[:5]
+        else:
+            self.log(f"Found {len(image_paths)} images")
+
+        return image_paths
+
+    def load_and_resize_image(self, image_path, width, height):
+        """Загружает и изменяет размер изображения"""
+        # from PIL import Image
+
+        if (width == 0) or (height == 0):
+            return None
+        # self.log(f"load_and_resize_image: {width} {height}")
+
+        # Загружаем изображение
+        img = Image.open(image_path)
+
+        # self.log(f"img open: {img.width} {img.height}")
+
+        # Вычисляем соотношение сторон
+        img_ratio = img.width / img.height
+
+        # self.log(f"img_ratio: {img_ratio}")
+
+        # Вычисляем новые размеры, сохраняя соотношение сторон
+        if img_ratio > 1:  # Широкое изображение
+            new_width = width
+            new_height = int(width / img_ratio)
+        else:  # Высокое или квадратное изображение
+            new_height = height
+            new_width = int(height * img_ratio)
+
+        # self.log(f"here: {new_width} {new_height}")
+
+        # Изменяем размер изображения
+        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
+        # self.log(f"here: {new_width} {new_height}")
+
+        return img
 
     def setup_right_frame(self, frame):
         # Create notebook for different logs
@@ -170,7 +339,7 @@ class COMPortApplication:
 
         # Example implementation - looking for CSV and Excel files in current directory
         self.tables_list = []
-        self.log(f"os.listdir(DATA_PATH) {os.listdir(DATA_PATH)}")
+
         for file in os.listdir(DATA_PATH):
             if file.endswith(".csv") or file.endswith(".xlsx") or file.endswith(".xls"):
                 self.tables_list.append(file)
