@@ -6,8 +6,8 @@ import os
 import pandas as pd
 
 from app import CableTesterApplication, DATA_PATH
-from ports import send_data
-from middle_frame import update_data_view
+from cta_ports import send_data
+from cta_middle_frame import update_data_view
 
 
 def start_process(self: CableTesterApplication):

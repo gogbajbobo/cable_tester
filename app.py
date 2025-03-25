@@ -8,7 +8,7 @@ import pandas as pd
 from datetime import datetime
 from PIL import ImageTk
 
-import layout
+import cta_layout
 
 DATA_PATH = os.path.join(os.path.curdir, "data")
 
@@ -41,7 +41,7 @@ class CableTesterApplication:
         self.image_references: list[ImageTk.PhotoImage | None] = []
 
         # Create the main layout
-        layout.create_layout(self)
+        cta_layout.create_layout(self)
 
         # Initialize logs
         self.log("Application started")

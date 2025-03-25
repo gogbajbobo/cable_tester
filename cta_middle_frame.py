@@ -4,7 +4,7 @@ import os
 from PIL import ImageTk
 
 from app import CableTesterApplication
-from images import find_images, load_and_resize_image
+from cta_images import find_images, load_and_resize_image
 
 
 def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):

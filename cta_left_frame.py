@@ -1,9 +1,9 @@
 from tkinter import ttk
 
 from app import CableTesterApplication
-from tables import update_tables_list, on_table_selected
-from ports import update_ports_list
-from process import start_process, stop_process
+from cta_tables import update_tables_list, on_table_selected
+from cta_ports import update_ports_list
+from cta_process import start_process, stop_process
 
 
 def test_func():

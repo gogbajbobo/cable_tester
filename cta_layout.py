@@ -3,9 +3,9 @@ from tkinter import ttk
 
 from app import CableTesterApplication
 
-from left_frame import setup_left_frame
-from middle_frame import setup_middle_frame
-from right_frame import setup_right_frame
+from cta_left_frame import setup_left_frame
+from cta_middle_frame import setup_middle_frame
+from cta_right_frame import setup_right_frame
 
 
 def create_layout(self: CableTesterApplication):
