@@ -86,12 +86,13 @@ class COMPortApplication:
 
         try:
             # Загружаем выбранную таблицу
-            if selected_table.endswith(".csv"):
-                self.table_data = pd.read_csv(selected_table)
-            elif selected_table.endswith(".xlsx"):
-                self.table_data = pd.read_excel(selected_table)
+            st = os.path.join(DATA_PATH, selected_table)
+            if st.endswith(".csv"):
+                self.table_data = pd.read_csv(st)
+            elif st.endswith(".xlsx") or st.endswith(".xls"):
+                self.table_data = pd.read_excel(st)
             else:
-                self.log(f"Unsupported file format: {selected_table}")
+                self.log(f"Unsupported file format: {st}")
                 return
 
             # Получаем информацию о таблице
