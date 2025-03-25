@@ -74,6 +74,69 @@ class COMPortApplication:
         # Right Frame - System Information
         self.setup_right_frame(right_frame)
 
+    def on_table_selected(self, event=None):
+        """Обрабатывает выбор таблицы из выпадающего списка"""
+        selected_table = self.selected_table.get()
+
+        if not selected_table:
+            self.log("No table selected")
+            return
+
+        self.log(f"Table selected: {selected_table}")
+
+        try:
+            # Загружаем выбранную таблицу
+            if selected_table.endswith(".csv"):
+                self.table_data = pd.read_csv(selected_table)
+            elif selected_table.endswith(".xlsx"):
+                self.table_data = pd.read_excel(selected_table)
+            else:
+                self.log(f"Unsupported file format: {selected_table}")
+                return
+
+            # Получаем информацию о таблице
+            rows, cols = self.table_data.shape
+            self.log(f"Table loaded: {rows} rows, {cols} columns")
+
+            # Очищаем текущие данные в Treeview
+            for item in self.data_tree.get_children():
+                self.data_tree.delete(item)
+
+            # Опционально: Показываем превью таблицы (первые несколько строк)
+            preview_rows = min(5, rows)  # показываем максимум 5 строк для превью
+            for i in range(preview_rows):
+                row = self.table_data.iloc[i]
+                preview = str(dict(zip(self.table_data.columns[:3], row.values[:3])))
+                if len(self.table_data.columns) > 3:
+                    preview += (
+                        " ... "  # добавляем многоточие, если есть больше столбцов
+                    )
+                self.data_tree.insert("", "end", values=(f"Preview Row {i}", preview))
+
+            # Если таблица содержит информацию о контактах, обновляем соответствующее поле
+            if (
+                "contacts" in self.table_data.columns
+                or "Contacts" in self.table_data.columns
+            ):
+                contact_col = (
+                    "contacts" if "contacts" in self.table_data.columns else "Contacts"
+                )
+                # Берем максимальное значение из столбца контактов, если это число
+                try:
+                    max_contacts = self.table_data[contact_col].max()
+                    if pd.notna(max_contacts) and isinstance(
+                        max_contacts, (int, float)
+                    ):
+                        self.contact_count.set(int(max_contacts))
+                        self.log(
+                            f"Updated contact count to {max_contacts} based on table data"
+                        )
+                except Exception as e:
+                    self.log(f"Could not update contact count from table: {str(e)}")
+
+        except Exception as e:
+            self.log(f"Error loading table {selected_table}: {str(e)}")
+
     def setup_left_frame(self, frame):
         # Tables section
         ttk.Label(frame, text="Tables:").grid(
@@ -84,6 +147,8 @@ class COMPortApplication:
         ).grid(row=1, column=0, padx=5, pady=5, sticky="ew")
         self.tables_combobox = ttk.Combobox(frame, textvariable=self.selected_table)
         self.tables_combobox.grid(row=2, column=0, padx=5, pady=5, sticky="ew")
+        # Привязываем обработчик события выбора
+        self.tables_combobox.bind("<<ComboboxSelected>>", self.on_table_selected)
 
         # COM Ports section
         ttk.Label(frame, text="COM Ports:").grid(
@@ -349,6 +414,7 @@ class COMPortApplication:
         if self.tables_list:
             self.tables_combobox.current(0)
             self.log(f"Found {len(self.tables_list)} tables")
+            self.on_table_selected()
         else:
             self.log("No tables found")
 
