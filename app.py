@@ -114,6 +114,7 @@ class COMPortApplication:
         frame.grid_columnconfigure(0, weight=1)
 
     def setup_middle_frame(self, frame):
+
         # Data view section
         ttk.Label(frame, text="Received Data and Corresponding Table Data:").grid(
             row=0, column=0, padx=5, pady=5, sticky="w"
@@ -145,28 +146,6 @@ class COMPortApplication:
         # Create notebook for different logs
         notebook = ttk.Notebook(frame)
         notebook.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
-
-        # Received data tab
-        received_frame = ttk.Frame(notebook)
-        notebook.add(received_frame, text="Received Data")
-
-        self.received_text = tk.Text(received_frame, wrap="word")
-        self.received_text.pack(fill="both", expand=True)
-        received_scrollbar = ttk.Scrollbar(
-            received_frame, command=self.received_text.yview
-        )
-        received_scrollbar.pack(side="right", fill="y")
-        self.received_text.configure(yscrollcommand=received_scrollbar.set)
-
-        # Sent data tab
-        sent_frame = ttk.Frame(notebook)
-        notebook.add(sent_frame, text="Sent Data")
-
-        self.sent_text = tk.Text(sent_frame, wrap="word")
-        self.sent_text.pack(fill="both", expand=True)
-        sent_scrollbar = ttk.Scrollbar(sent_frame, command=self.sent_text.yview)
-        sent_scrollbar.pack(side="right", fill="y")
-        self.sent_text.configure(yscrollcommand=sent_scrollbar.set)
 
         # Application logs tab
         logs_frame = ttk.Frame(notebook)
@@ -306,7 +285,7 @@ class COMPortApplication:
                         data = data.decode("utf-8", errors="replace")
 
                     # Log received data
-                    self.log_received(f"Received: {data}")
+                    self.log(f"Received: {data}")
 
                     # Process the data and send response
                     self.process_data(data)
@@ -376,7 +355,7 @@ class COMPortApplication:
                     data = data.encode("utf-8")
 
                 self.serial_connection.write(data)
-                self.log_sent(f"Sent: {data}")
+                self.log(f"Sent: {data}")
             except Exception as e:
                 self.log(f"Error sending data: {str(e)}")
 
@@ -404,22 +383,6 @@ class COMPortApplication:
 
         # Print to console as well for debugging
         print(log_message, end="")
-
-    def log_received(self, message):
-        """Log received data"""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_message = f"[{timestamp}] {message}\n"
-
-        self.root.after(0, lambda: self.received_text.insert(tk.END, log_message))
-        self.root.after(0, lambda: self.received_text.see(tk.END))
-
-    def log_sent(self, message):
-        """Log sent data"""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log_message = f"[{timestamp}] {message}\n"
-
-        self.root.after(0, lambda: self.sent_text.insert(tk.END, log_message))
-        self.root.after(0, lambda: self.sent_text.see(tk.END))
 
 
 def main():
