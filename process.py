@@ -1,15 +1,13 @@
-import tkinter as tk
-from tkinter import ttk
 import serial
 import serial.tools.list_ports
 import threading
 import time
 import os
 import pandas as pd
-from datetime import datetime
-from PIL import ImageTk
 
 from app import CableTesterApplication, DATA_PATH
+from ports import send_data
+from middle_frame import update_data_view
 
 
 def start_process(self: CableTesterApplication):
@@ -157,10 +155,10 @@ def process_data(self: CableTesterApplication, data):
             response = f"Error processing data: {str(e)}"
 
         # Update the middle frame with the data
-        self.update_data_view(value, response)
+        update_data_view(self, value, response)
 
         # Send response back through COM port
-        self.send_data(response)
+        send_data(self, response)
 
     except Exception as e:
         self.log(f"Error processing data: {str(e)}")

@@ -16,3 +16,17 @@ def update_ports_list(self: CableTesterApplication):
         self.log(f"Found {len(ports)} COM ports")
     else:
         self.log("No COM ports found")
+
+
+def send_data(self: CableTesterApplication, data):
+    """Send data to the COM port"""
+    if self.serial_connection and self.serial_connection.is_open:
+        try:
+            # Convert to bytes if it's a string
+            if isinstance(data, str):
+                data = (data + "\n").encode("utf-8")
+
+            self.serial_connection.write(data)
+            self.log(f"Sent: {data}")
+        except Exception as e:
+            self.log(f"Error sending data: {str(e)}")

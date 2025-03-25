@@ -3,7 +3,6 @@ from tkinter import ttk
 import serial
 import serial.tools.list_ports
 import threading
-import time
 import os
 import pandas as pd
 from datetime import datetime
@@ -46,32 +45,6 @@ class CableTesterApplication:
 
         # Initialize logs
         self.log("Application started")
-
-    def send_data(self, data):
-        """Send data to the COM port"""
-        if self.serial_connection and self.serial_connection.is_open:
-            try:
-                # Convert to bytes if it's a string
-                if isinstance(data, str):
-                    data = data.encode("utf-8")
-
-                self.serial_connection.write(data)
-                self.log(f"Sent: {data}")
-            except Exception as e:
-                self.log(f"Error sending data: {str(e)}")
-
-    def update_data_view(self, received, table_data):
-        """Update the middle frame with received and corresponding table data"""
-        # Add to the treeview
-        self.data_tree.insert("", "end", values=(received, table_data))
-
-        # Auto-scroll to the bottom
-        self.data_tree.yview_moveto(1)
-
-        # Limit the number of items (optional)
-        items = self.data_tree.get_children()
-        if len(items) > 100:  # Keep only the last 100 entries
-            self.data_tree.delete(items[0])
 
     def log(self, message):
         """Add a message to the application log"""

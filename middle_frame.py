@@ -140,3 +140,17 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     frame.grid_rowconfigure(
         2, weight=1
     )  # Изменено с 1 на 2, так как добавили строку с изображениями
+
+
+def update_data_view(self: CableTesterApplication, received, table_data):
+    """Update the middle frame with received and corresponding table data"""
+    # Add to the treeview
+    self.data_tree.insert("", "end", values=(received, table_data))
+
+    # Auto-scroll to the bottom
+    self.data_tree.yview_moveto(1)
+
+    # Limit the number of items (optional)
+    items = self.data_tree.get_children()
+    if len(items) > 100:  # Keep only the last 100 entries
+        self.data_tree.delete(items[0])
