@@ -49,15 +49,14 @@ def read_data(self: CableTesterApplication):
         # Convert bytes to string if needed
         if isinstance(data, bytes):
             data = data.decode("utf-8", errors="replace")
+            # Process the data and send response
+            process_data(self, data)
 
         # Log received data
         self.log(f"Received: {data}")
 
-        # Process the data and send response
-        process_data(self, data)
 
-
-def process_data(self: CableTesterApplication, data):
+def process_data(self: CableTesterApplication, data: str):
     """Process the received data and send appropriate response"""
     try:
         # This is a placeholder - implement your actual data processing logic
@@ -65,6 +64,10 @@ def process_data(self: CableTesterApplication, data):
 
         # Example implementation:
         value = data.strip()
+
+        if value == "?":
+            send_data(self, str(self.contact_count.get()))
+            self.log(f"Contact count set to {self.contact_count.get()}")
 
         # Look up the value in the table (simplified example)
         try:

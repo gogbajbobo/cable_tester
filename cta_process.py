@@ -25,7 +25,6 @@ def start_process(self: CableTesterApplication):
         self.log(
             f"Starting process with port {self.selected_port.get()} and table {self.selected_table.get()}"
         )
-        self.log(f"Contact count set to {self.contact_count.get()}")
 
         # Load the selected table
         st = os.path.join(DATA_PATH, self.selected_table.get())
