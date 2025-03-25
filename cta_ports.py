@@ -2,6 +2,7 @@ import serial
 import serial.tools.list_ports
 
 from app import CableTesterApplication
+from cta_middle_frame import update_data_view
 
 
 def update_ports_list(self: CableTesterApplication):
@@ -16,6 +17,92 @@ def update_ports_list(self: CableTesterApplication):
         self.log(f"Found {len(ports)} COM ports")
     else:
         self.log("No COM ports found")
+
+
+def open_serial_connection(self: CableTesterApplication):
+    # Open the serial connection
+    try:
+        self.serial_connection = serial.Serial(
+            port=self.selected_port.get(),
+            baudrate=9600,  # You may need to adjust this
+            timeout=1,
+        )
+        self.log(f"Successfully opened COM port: {self.selected_port.get()}")
+    except Exception as e:
+        self.log(f"Error opening COM port: {str(e)}")
+        return
+
+
+def close_serial_connection(self: CableTesterApplication):
+    # Close the serial connection
+    if self.serial_connection and self.serial_connection.is_open:
+        self.serial_connection.close()
+        self.log("COM port closed")
+
+
+def read_data(self: CableTesterApplication):
+    # Check if there's data to read
+    if self.serial_connection and self.serial_connection.in_waiting > 0:
+        # Read data from COM port
+        data = self.serial_connection.readline().strip()
+
+        # Convert bytes to string if needed
+        if isinstance(data, bytes):
+            data = data.decode("utf-8", errors="replace")
+
+        # Log received data
+        self.log(f"Received: {data}")
+
+        # Process the data and send response
+        process_data(self, data)
+
+
+def process_data(self: CableTesterApplication, data):
+    """Process the received data and send appropriate response"""
+    try:
+        # This is a placeholder - implement your actual data processing logic
+        # For example, parse the received data and look up values in the table
+
+        # Example implementation:
+        value = data.strip()
+
+        # Look up the value in the table (simplified example)
+        try:
+            # Convert to numeric if possible
+            numeric_value = (
+                float(value) if value.replace(".", "", 1).isdigit() else value
+            )
+
+            # Find matching data in table (this is just an example)
+            # You'll need to adapt this to your actual table structure
+            if isinstance(numeric_value, (int, float)) and numeric_value < len(
+                self.table_data
+            ):
+                row_index = int(numeric_value)
+                table_row = self.table_data.iloc[row_index]
+                response = str(table_row.to_dict())
+            else:
+                # Search for the value in the table
+                found = False
+                for idx, row in self.table_data.iterrows():
+                    if value in str(row.values):
+                        response = str(row.to_dict())
+                        found = True
+                        break
+
+                if not found:
+                    response = "No matching data found"
+        except Exception as e:
+            response = f"Error processing data: {str(e)}"
+
+        # Update the middle frame with the data
+        update_data_view(self, value, response)
+
+        # Send response back through COM port
+        send_data(self, response)
+
+    except Exception as e:
+        self.log(f"Error processing data: {str(e)}")
 
 
 def send_data(self: CableTesterApplication, data):
