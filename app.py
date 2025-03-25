@@ -9,11 +9,13 @@ import pandas as pd
 from datetime import datetime
 from PIL import ImageTk, Image
 
+import layout
+
 DATA_PATH = os.path.join(os.path.curdir, "data")
 
 
-class COMPortApplication:
-    def __init__(self, root):
+class CableTesterApplication:
+    def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("COM Port Data Manager")
         self.root.geometry("1200x700")
@@ -27,8 +29,17 @@ class COMPortApplication:
         self.serial_connection = None
         self.thread = None
 
+        # init empty props
+        self.tables_combobox = ttk.Combobox()
+        self.ports_combobox = ttk.Combobox()
+        self.data_tree = ttk.Treeview()
+        self.logs_text = tk.Text()
+
+        # Хранилище для ссылок на изображения (чтобы избежать сборки мусора)
+        self.image_references: list[ImageTk.PhotoImage | None] = []
+
         # Create the main layout
-        self.create_layout()
+        layout.create_layout(self)
 
         # Initialize logs
         self.log("Application started")
@@ -36,43 +47,6 @@ class COMPortApplication:
         # Update initial ports and tables lists
         self.update_ports_list()
         self.update_tables_list()
-
-    def create_layout(self):
-        # Создаем корневой PanedWindow с горизонтальной ориентацией
-        main_paned = tk.PanedWindow(self.root, orient=tk.HORIZONTAL)
-        main_paned.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        # Create frames for the three sections
-        left_frame = ttk.LabelFrame(main_paned, text="Control Panel")
-
-        # Вложенный PanedWindow для средней и правой частей
-        right_paned = tk.PanedWindow(main_paned, orient=tk.HORIZONTAL)
-
-        middle_frame = ttk.LabelFrame(right_paned, text="Data View")
-        right_frame = ttk.LabelFrame(right_paned, text="System Information")
-
-        # Добавляем фреймы в соответствующие PanedWindow
-        main_paned.add(left_frame)
-        main_paned.add(right_paned)
-
-        right_paned.add(middle_frame)
-        right_paned.add(right_frame)
-
-        # Установка начальных позиций разделителей после отрисовки окна
-        self.root.update()
-        total_width = self.root.winfo_width() - 20  # Учитываем отступы
-
-        main_paned.sash_place(0, int(total_width * 0.2), 0)
-        right_paned.sash_place(0, int(total_width * 0.5), 0)
-
-        # Left Frame - Control Panel
-        self.setup_left_frame(left_frame)
-
-        # Middle Frame - Data View
-        self.setup_middle_frame(middle_frame)
-
-        # Right Frame - System Information
-        self.setup_right_frame(right_frame)
 
     def on_table_selected(self, event=None):
         """Обрабатывает выбор таблицы из выпадающего списка"""
@@ -138,189 +112,6 @@ class COMPortApplication:
         except Exception as e:
             self.log(f"Error loading table {selected_table}: {str(e)}")
 
-    def setup_left_frame(self, frame):
-        # Tables section
-        ttk.Label(frame, text="Tables:").grid(
-            row=0, column=0, padx=5, pady=5, sticky="w"
-        )
-        ttk.Button(
-            frame, text="Update Tables List", command=self.update_tables_list
-        ).grid(row=1, column=0, padx=5, pady=5, sticky="ew")
-        self.tables_combobox = ttk.Combobox(frame, textvariable=self.selected_table)
-        self.tables_combobox.grid(row=2, column=0, padx=5, pady=5, sticky="ew")
-        # Привязываем обработчик события выбора
-        self.tables_combobox.bind("<<ComboboxSelected>>", self.on_table_selected)
-
-        # COM Ports section
-        ttk.Label(frame, text="COM Ports:").grid(
-            row=3, column=0, padx=5, pady=5, sticky="w"
-        )
-        ttk.Button(
-            frame, text="Update COM Ports List", command=self.update_ports_list
-        ).grid(row=4, column=0, padx=5, pady=5, sticky="ew")
-        self.ports_combobox = ttk.Combobox(frame, textvariable=self.selected_port)
-        self.ports_combobox.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
-
-        # Contact count
-        ttk.Label(frame, text="Number of Contacts:").grid(
-            row=6, column=0, padx=5, pady=5, sticky="w"
-        )
-        ttk.Entry(frame, textvariable=self.contact_count).grid(
-            row=7, column=0, padx=5, pady=5, sticky="ew"
-        )
-
-        # Control buttons
-        ttk.Button(frame, text="Start Process", command=self.start_process).grid(
-            row=8, column=0, padx=5, pady=5, sticky="ew"
-        )
-        ttk.Button(frame, text="Stop Process", command=self.stop_process).grid(
-            row=9, column=0, padx=5, pady=5, sticky="ew"
-        )
-
-        # Configure grid weights for left frame
-        frame.grid_columnconfigure(0, weight=1)
-
-    def setup_middle_frame(self, frame):
-        # Создаем фрейм для изображений вверху
-        images_frame = ttk.Frame(frame)
-        images_frame.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
-
-        # Создаем Canvas для размещения изображений
-        images_canvas = tk.Canvas(images_frame, height=150)
-        images_canvas.pack(fill="x", expand=True)
-
-        # Список путей к изображениям (замените на свои пути)
-        # Можно добавить поиск изображений в директории
-        image_paths = self.find_images()
-
-        # Хранилище для ссылок на изображения (чтобы избежать сборки мусора)
-        self.image_references: list[ImageTk.PhotoImage | None] = []
-
-        # Загрузка и отображение изображений
-        if image_paths:
-            # Вычисляем размер для каждого изображения
-            img_width = min(
-                150, (images_canvas.winfo_width() or 800) // max(1, len(image_paths))
-            )
-            img_height = 150
-
-            self.image_references = [None] * len(image_paths)
-
-            # Загружаем и отображаем изображения
-            for i, img_path in enumerate(image_paths):
-                try:
-                    # Загружаем изображение
-                    pil_img = self.load_and_resize_image(
-                        img_path, img_width, img_height
-                    )
-                    if pil_img:
-                        tk_img = ImageTk.PhotoImage(pil_img)
-                        self.image_references.append(tk_img)  # Сохраняем ссылку
-
-                        # Вычисляем позицию
-                        x_pos = i * img_width
-
-                        # Отображаем изображение
-                        images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
-
-                        # Добавляем подпись (имя файла)
-                        file_name = os.path.basename(img_path)
-                        images_canvas.create_text(
-                            x_pos + img_width // 2,
-                            img_height - 10,
-                            text=file_name,
-                            fill="black",
-                            font=("Arial", 8),
-                            anchor="s",
-                        )
-
-                except Exception as e:
-                    self.log(f"Error loading image {img_path}: {str(e)}")
-
-            # Обновляем размер canvas, чтобы вместить все изображения
-            images_canvas.config(scrollregion=images_canvas.bbox("all"))
-        else:
-            # Если изображений нет, показываем сообщение
-            images_canvas.create_text(
-                images_canvas.winfo_width() // 2,
-                75,
-                text="No images found",
-                fill="gray",
-                font=("Arial", 12),
-            )
-
-        # Обработчик изменения размера
-        def on_canvas_resize(event):
-            if image_paths:
-                # Очищаем canvas
-                images_canvas.delete("all")
-
-                # Пересчитываем размеры
-                new_img_width = min(150, event.width // max(1, len(image_paths)))
-
-                # Перерисовываем изображения
-                for i, img_path in enumerate(image_paths):
-                    try:
-                        # Загружаем и изменяем размер изображения
-                        pil_img = self.load_and_resize_image(
-                            img_path, new_img_width, img_height
-                        )
-                        tk_img = ImageTk.PhotoImage(pil_img)
-
-                        self.image_references[i] = tk_img  # Обновляем ссылку
-
-                        # Вычисляем позицию
-                        x_pos = i * new_img_width
-
-                        # Отображаем изображение
-                        images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
-
-                        # Добавляем подпись
-                        file_name = os.path.basename(img_path)
-                        images_canvas.create_text(
-                            x_pos + new_img_width // 2,
-                            img_height - 10,
-                            text=file_name,
-                            fill="black",
-                            font=("Arial", 8),
-                            anchor="s",
-                        )
-
-                    except Exception as e:
-                        self.log(f"Error resizing image {img_path}: {str(e)}")
-
-        # Привязываем обработчик
-        images_canvas.bind("<Configure>", on_canvas_resize)
-
-        # Data view section with header
-        ttk.Label(frame, text="Received Data and Corresponding Table Data:").grid(
-            row=1, column=0, padx=5, pady=5, sticky="w"
-        )
-
-        # Create Treeview for data display
-        columns = ("Received Data", "Table Data")
-        self.data_tree = ttk.Treeview(frame, columns=columns, show="headings")
-
-        # Set column headings
-        for col in columns:
-            self.data_tree.heading(col, text=col)
-            self.data_tree.column(col, width=150)
-
-        self.data_tree.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
-
-        # Add scrollbar
-        scrollbar = ttk.Scrollbar(
-            frame, orient="vertical", command=self.data_tree.yview
-        )
-        scrollbar.grid(row=2, column=1, sticky="ns")
-        self.data_tree.configure(yscrollcommand=scrollbar.set)
-
-        # Configure grid weights for middle frame
-        frame.grid_columnconfigure(0, weight=1)
-        frame.grid_rowconfigure(
-            2, weight=1
-        )  # Изменено с 1 на 2, так как добавили строку с изображениями
-
     def find_images(self):
         """Ищет изображения в текущей директории"""
         image_paths = []
@@ -348,17 +139,12 @@ class COMPortApplication:
 
         if (width == 0) or (height == 0):
             return None
-        # self.log(f"load_and_resize_image: {width} {height}")
 
         # Загружаем изображение
         img = Image.open(image_path)
 
-        # self.log(f"img open: {img.width} {img.height}")
-
         # Вычисляем соотношение сторон
         img_ratio = img.width / img.height
-
-        # self.log(f"img_ratio: {img_ratio}")
 
         # Вычисляем новые размеры, сохраняя соотношение сторон
         if img_ratio > 1:  # Широкое изображение
@@ -368,33 +154,12 @@ class COMPortApplication:
             new_height = height
             new_width = int(height * img_ratio)
 
-        # self.log(f"here: {new_width} {new_height}")
-
         # Изменяем размер изображения
         img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
         # self.log(f"here: {new_width} {new_height}")
 
         return img
-
-    def setup_right_frame(self, frame):
-        # Create notebook for different logs
-        notebook = ttk.Notebook(frame)
-        notebook.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
-
-        # Application logs tab
-        logs_frame = ttk.Frame(notebook)
-        notebook.add(logs_frame, text="Application Logs")
-
-        self.logs_text = tk.Text(logs_frame, wrap="word")
-        self.logs_text.pack(fill="both", expand=True)
-        logs_scrollbar = ttk.Scrollbar(logs_frame, command=self.logs_text.yview)
-        logs_scrollbar.pack(side="right", fill="y")
-        self.logs_text.configure(yscrollcommand=logs_scrollbar.set)
-
-        # Configure grid weights for right frame
-        frame.grid_columnconfigure(0, weight=1)
-        frame.grid_rowconfigure(0, weight=1)
 
     def update_tables_list(self):
         """Update the list of available tables"""
@@ -623,7 +388,7 @@ class COMPortApplication:
 
 def main():
     root = tk.Tk()
-    app = COMPortApplication(root)
+    app = CableTesterApplication(root)
     root.mainloop()
 
 
