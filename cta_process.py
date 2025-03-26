@@ -5,6 +5,7 @@ import pandas as pd
 
 from app import CableTesterApplication, DATA_PATH, COM_STATE
 from cta_ports import open_serial_connection, close_serial_connection, read_data
+from cta_tables import load_selected_table
 
 
 def start_process(self: CableTesterApplication):
@@ -26,18 +27,7 @@ def start_process(self: CableTesterApplication):
             f"Starting process with port {self.selected_port.get()} and table {self.selected_table.get()}"
         )
 
-        # Load the selected table
-        st = os.path.join(DATA_PATH, self.selected_table.get())
-        try:
-            if st.endswith(".csv"):
-                self.table_data = pd.read_csv(st, sep=";")
-            elif st.endswith(".xlsx") or st.endswith(".xls"):
-                self.table_data = pd.read_excel(st)
-            self.log(f"Successfully loaded table: {st}")
-        except Exception as e:
-            self.log(f"Error loading table: {str(e)}")
-            return
-
+        load_selected_table(self)
         open_serial_connection(self)
 
         # Start the process thread

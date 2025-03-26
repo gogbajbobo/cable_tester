@@ -15,15 +15,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
     self.log(f"Table selected: {selected_table}")
 
     try:
-        # Загружаем выбранную таблицу
-        st = os.path.join(DATA_PATH, selected_table)
-        if st.endswith(".csv"):
-            self.table_data = pd.read_csv(st, sep=";")
-        elif st.endswith(".xlsx") or st.endswith(".xls"):
-            self.table_data = pd.read_excel(st)
-        else:
-            self.log(f"Unsupported file format: {st}")
-            return
+        load_selected_table(self)
 
         # Получаем информацию о таблице
         rows, cols = self.table_data.shape
@@ -89,3 +81,20 @@ def update_tables_list(self: CableTesterApplication):
         self.root.after(0, lambda: on_table_selected(self))
     else:
         self.log("No tables found")
+
+
+def load_selected_table(self: CableTesterApplication):
+    # Load the selected table
+    st = os.path.join(DATA_PATH, self.selected_table.get())
+    try:
+        if st.endswith(".csv"):
+            self.table_data = pd.read_csv(st, sep=";")
+        elif st.endswith(".xlsx") or st.endswith(".xls"):
+            self.table_data = pd.read_excel(st)
+        else:
+            self.log_warning(f"Unsupported file format: {st}")
+            return
+        self.log_info(f"Successfully loaded table: {st}")
+    except Exception as e:
+        self.log_error(f"Error loading table: {str(e)}")
+        return
