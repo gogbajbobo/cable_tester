@@ -1,7 +1,7 @@
 import serial
 import serial.tools.list_ports
 
-from app import CableTesterApplication
+from app import CableTesterApplication, COM_STATE
 from cta_middle_frame import update_data_view
 
 
@@ -14,9 +14,9 @@ def update_ports_list(self: CableTesterApplication):
 
     if ports:
         self.ports_combobox.current(0)
-        self.log(f"Found {len(ports)} COM ports")
+        self.log_info(f"Found {len(ports)} COM ports")
     else:
-        self.log("No COM ports found")
+        self.log_error("No COM ports found")
 
 
 def open_serial_connection(self: CableTesterApplication):
@@ -27,9 +27,9 @@ def open_serial_connection(self: CableTesterApplication):
             baudrate=9600,  # You may need to adjust this
             timeout=1,
         )
-        self.log(f"Successfully opened COM port: {self.selected_port.get()}")
+        self.log_info(f"Successfully opened COM port: {self.selected_port.get()}")
     except Exception as e:
-        self.log(f"Error opening COM port: {str(e)}")
+        self.log_error(f"Error opening COM port: {str(e)}")
         return
 
 
@@ -65,44 +65,54 @@ def process_data(self: CableTesterApplication, data: str):
         # Example implementation:
         value = data.strip()
 
-        if value == "?":
-            send_data(self, str(self.contact_count.get()))
-            self.log(f"Contact count set to {self.contact_count.get()}")
+        _contact_count = str(self.contact_count.get())
 
-        # Look up the value in the table (simplified example)
-        try:
-            # Convert to numeric if possible
-            numeric_value = (
-                float(value) if value.replace(".", "", 1).isdigit() else value
-            )
+        if self.com_state == COM_STATE.PREINIT:
+            if value == "?":
+                send_data(self, _contact_count)
+                self.log(f"Contact count set to {_contact_count}")
+                self.com_state = COM_STATE.INIT
 
-            # Find matching data in table (this is just an example)
-            # You'll need to adapt this to your actual table structure
-            if isinstance(numeric_value, (int, float)) and numeric_value < len(
-                self.table_data
-            ):
-                row_index = int(numeric_value)
-                table_row = self.table_data.iloc[row_index]
-                response = str(table_row.to_dict())
-            else:
-                # Search for the value in the table
-                found = False
-                for idx, row in self.table_data.iterrows():
-                    if value in str(row.values):
-                        response = str(row.to_dict())
-                        found = True
-                        break
+        elif self.com_state == COM_STATE.INIT:
+            if value == _contact_count:
+                self.log(f"Get confirm set to {_contact_count}")
+                self.com_state = COM_STATE.LISTEN
 
-                if not found:
-                    response = "No matching data found"
-        except Exception as e:
-            response = f"Error processing data: {str(e)}"
+        elif self.com_state == COM_STATE.LISTEN:
+            # Look up the value in the table (simplified example)
+            try:
+                # Convert to numeric if possible
+                numeric_value = (
+                    float(value) if value.replace(".", "", 1).isdigit() else value
+                )
 
-        # Update the middle frame with the data
-        update_data_view(self, value, response)
+                # Find matching data in table (this is just an example)
+                # You'll need to adapt this to your actual table structure
+                if isinstance(numeric_value, (int, float)) and numeric_value < len(
+                    self.table_data
+                ):
+                    row_index = int(numeric_value)
+                    table_row = self.table_data.iloc[row_index]
+                    response = str(table_row.to_dict())
+                else:
+                    # Search for the value in the table
+                    found = False
+                    for idx, row in self.table_data.iterrows():
+                        if value in str(row.values):
+                            response = str(row.to_dict())
+                            found = True
+                            break
 
-        # Send response back through COM port
-        send_data(self, response)
+                    if not found:
+                        response = "No matching data found"
+            except Exception as e:
+                response = f"Error processing data: {str(e)}"
+
+            # Update the middle frame with the data
+            update_data_view(self, value, response)
+
+            # Send response back through COM port
+            send_data(self, response)
 
     except Exception as e:
         self.log(f"Error processing data: {str(e)}")

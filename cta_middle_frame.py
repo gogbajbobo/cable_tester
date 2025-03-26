@@ -125,4 +125,4 @@ def create_images(
                 )
 
         except Exception as e:
-            self.log(f"Error loading image {img_path}: {str(e)}")
+            self.log_error(f"Error loading image {img_path}: {str(e)}")

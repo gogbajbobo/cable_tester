@@ -21,6 +21,13 @@ class COM_STATE(str, Enum):
     LISTEN = "listen"
 
 
+class LOG_TAG_CONFIG(str, Enum):
+    NONE = "None"
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+
+
 class CableTesterApplication:
     def __init__(self, root: tk.Tk):
         self.root = root
@@ -53,19 +60,28 @@ class CableTesterApplication:
         cta_layout.create_layout(self)
 
         # Initialize logs
-        self.log("Application started")
+        self.log_info("Application started")
 
-    def log(self, message):
+    def log(self, message, tag=LOG_TAG_CONFIG.NONE):
         """Add a message to the application log"""
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
 
         # Use after to ensure thread safety when updating the UI
-        self.root.after(0, lambda: self.logs_text.insert(tk.END, log_message))
+        self.root.after(0, lambda: self.logs_text.insert(tk.END, log_message, tag))
         self.root.after(0, lambda: self.logs_text.see(tk.END))
 
         # Print to console as well for debugging
         print(log_message, end="")
+
+    def log_info(self, message):
+        return self.log(message, LOG_TAG_CONFIG.INFO)
+
+    def log_warning(self, message):
+        return self.log(message, LOG_TAG_CONFIG.WARNING)
+
+    def log_error(self, message):
+        return self.log(message, LOG_TAG_CONFIG.ERROR)
 
 
 def main():
