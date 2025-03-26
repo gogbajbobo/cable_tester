@@ -30,7 +30,7 @@ def start_process(self: CableTesterApplication):
         st = os.path.join(DATA_PATH, self.selected_table.get())
         try:
             if st.endswith(".csv"):
-                self.table_data = pd.read_csv(st)
+                self.table_data = pd.read_csv(st, sep=";")
             elif st.endswith(".xlsx") or st.endswith(".xls"):
                 self.table_data = pd.read_excel(st)
             self.log(f"Successfully loaded table: {st}")

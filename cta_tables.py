@@ -18,7 +18,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
         # Загружаем выбранную таблицу
         st = os.path.join(DATA_PATH, selected_table)
         if st.endswith(".csv"):
-            self.table_data = pd.read_csv(st)
+            self.table_data = pd.read_csv(st, sep=";")
         elif st.endswith(".xlsx") or st.endswith(".xls"):
             self.table_data = pd.read_excel(st)
         else:
@@ -28,6 +28,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
         # Получаем информацию о таблице
         rows, cols = self.table_data.shape
         self.log(f"Table loaded: {rows} rows, {cols} columns")
+        self.log(self.table_data)
 
         # Очищаем текущие данные в Treeview
         for item in self.data_tree.get_children():
