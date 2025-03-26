@@ -3,7 +3,7 @@ import time
 import os
 import pandas as pd
 
-from app import CableTesterApplication, DATA_PATH
+from app import CableTesterApplication, DATA_PATH, COM_STATE
 from cta_ports import open_serial_connection, close_serial_connection, read_data
 
 
@@ -41,6 +41,7 @@ def start_process(self: CableTesterApplication):
         open_serial_connection(self)
 
         # Start the process thread
+        self.com_state = COM_STATE.PREINIT
         self.running = True
         self.thread = threading.Thread(target=lambda: process_loop(self))
         self.thread.daemon = True
@@ -58,6 +59,7 @@ def stop_process(self: CableTesterApplication):
 
     self.log("Stopping process")
     self.running = False
+    self.com_state = COM_STATE.NONE
 
     # Wait for the thread to finish
     if self.thread:

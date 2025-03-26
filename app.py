@@ -7,10 +7,18 @@ import os
 import pandas as pd
 from datetime import datetime
 from PIL import ImageTk
+from enum import Enum
 
 import cta_layout
 
 DATA_PATH = os.path.join(os.path.curdir, "data")
+
+
+class COM_STATE(str, Enum):
+    NONE = "None"
+    PREINIT = "preinit"
+    INIT = "init"
+    LISTEN = "listen"
 
 
 class CableTesterApplication:
@@ -24,6 +32,7 @@ class CableTesterApplication:
         self.selected_port = tk.StringVar()
         self.contact_count = tk.IntVar(value=32)
         self.running = False
+        self.com_state: COM_STATE = COM_STATE.NONE
         self.tables_list = []
         self.serial_connection = None
         self.thread = None
