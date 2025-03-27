@@ -14,7 +14,7 @@ def create_layout(self: CableTesterApplication):
     main_paned.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
     # Create frames for the three sections
-    left_frame = ttk.LabelFrame(main_paned, text="Control Panel")
+    self.left_frame = ttk.LabelFrame(main_paned, text="Control Panel")
 
     # Вложенный PanedWindow для средней и правой частей
     right_paned = tk.PanedWindow(main_paned, orient=tk.HORIZONTAL)
@@ -23,7 +23,7 @@ def create_layout(self: CableTesterApplication):
     right_frame = ttk.LabelFrame(right_paned, text="System Information")
 
     # Добавляем фреймы в соответствующие PanedWindow
-    main_paned.add(left_frame)
+    main_paned.add(self.left_frame)
     main_paned.add(right_paned)
 
     right_paned.add(middle_frame)
@@ -37,12 +37,12 @@ def create_layout(self: CableTesterApplication):
     right_paned.sash_place(0, int(total_width * 0.5), 0)
 
     # Setup Frames
-    setup_left_frame(self, left_frame)  # Left Frame - Control Panel
+    setup_left_frame(self, self.left_frame)  # Left Frame - Control Panel
     setup_middle_frame(self, middle_frame)  # Middle Frame - Data View
     setup_right_frame(self, right_frame)  # Right Frame - System Information
 
     # Configure grid weights
-    left_frame.grid_columnconfigure(0, weight=1)
+    self.left_frame.grid_columnconfigure(0, weight=1)
 
     middle_frame.grid_columnconfigure(0, weight=1)
     middle_frame.grid_rowconfigure(

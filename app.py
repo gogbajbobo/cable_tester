@@ -45,6 +45,7 @@ class CableTesterApplication:
         self.thread = None
 
         # init empty props
+        self.left_frame = ttk.LabelFrame()
         self.tables_combobox = ttk.Combobox()
         self.ports_combobox = ttk.Combobox()
         self.data_tree = ttk.Treeview()
