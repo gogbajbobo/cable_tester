@@ -69,9 +69,12 @@ def update_tables_list(self: CableTesterApplication):
     # Example implementation - looking for CSV and Excel files in current directory
     self.tables_list = []
 
-    for file in os.listdir(DATA_PATH):
-        if file.endswith(".csv") or file.endswith(".xlsx") or file.endswith(".xls"):
-            self.tables_list.append(file)
+    if os.path.isdir(DATA_PATH):
+        for file in os.listdir(DATA_PATH):
+            if file.endswith(".csv") or file.endswith(".xlsx") or file.endswith(".xls"):
+                self.tables_list.append(file)
+    else:
+        self.log_error(f"Have no data dir {DATA_PATH}")
 
     self.tables_combobox["values"] = self.tables_list
 

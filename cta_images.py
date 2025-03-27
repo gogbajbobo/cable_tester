@@ -5,23 +5,25 @@ from app import CableTesterApplication, DATA_PATH
 
 
 def find_images(self: CableTesterApplication):
-    """Ищет изображения в текущей директории"""
+    """Ищет изображения в директории %DATA_PATH%"""
     image_paths = []
 
     # Расширения файлов изображений, которые мы ищем
     image_extensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp"]
 
-    # Ищем изображения в текущей директории
-    for file in os.listdir(DATA_PATH):
-        if any(file.lower().endswith(ext) for ext in image_extensions):
-            image_paths.append(os.path.join(DATA_PATH, file))
+    if os.path.isdir(DATA_PATH):
+        for file in os.listdir(DATA_PATH):
+            if any(file.lower().endswith(ext) for ext in image_extensions):
+                image_paths.append(os.path.join(DATA_PATH, file))
 
-    # Ограничиваем количество изображений (опционально)
-    if len(image_paths) > 5:
-        self.log_warning(f"Found {len(image_paths)} images, showing first 5")
-        image_paths = image_paths[:5]
+        # Ограничиваем количество изображений (опционально)
+        if len(image_paths) > 5:
+            self.log_warning(f"Found {len(image_paths)} images, showing first 5")
+            image_paths = image_paths[:5]
+        else:
+            self.log(f"Found {len(image_paths)} images")
     else:
-        self.log(f"Found {len(image_paths)} images")
+        self.log_error(f"Have no data dir {DATA_PATH}")
 
     return image_paths
 
