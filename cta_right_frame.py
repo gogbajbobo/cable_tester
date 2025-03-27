@@ -20,5 +20,5 @@ def setup_right_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.logs_text.configure(yscrollcommand=logs_scrollbar.set)
 
     self.logs_text.tag_config(LOG_TAG_CONFIG.INFO, foreground="green")
-    self.logs_text.tag_config(LOG_TAG_CONFIG.WARNING, foreground="yellow")
+    self.logs_text.tag_config(LOG_TAG_CONFIG.WARNING, foreground="orange")
     self.logs_text.tag_config(LOG_TAG_CONFIG.ERROR, foreground="red")
