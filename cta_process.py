@@ -10,15 +10,15 @@ import cta_ports
 def start_process(self: CableTesterApplication):
     """Start the main process loop"""
     if self.running:
-        self.log("Process is already running")
+        self.log_warning("Process is already running")
         return
 
     if not self.selected_port.get():
-        self.log("Error: No COM port selected")
+        self.log_error("Error: No COM port selected")
         return
 
     if not self.selected_table.get():
-        self.log("Error: No table selected")
+        self.log_error("Error: No table selected")
         return
 
     try:
@@ -44,7 +44,7 @@ def start_process(self: CableTesterApplication):
 def stop_process(self: CableTesterApplication):
     """Stop the main process loop"""
     if not self.running:
-        self.log("Process is not running")
+        self.log_warning("Process is not running")
         return
 
     self.log("Stopping process")
