@@ -31,7 +31,7 @@ class LOG_TAG_CONFIG(str, Enum):
 class CableTesterApplication:
     def __init__(self, root: tk.Tk):
         self.root = root
-        self.root.title("COM Port Data Manager")
+        self.root.title("Cable tester")
         self.root.geometry("1200x700")
 
         # Variables
