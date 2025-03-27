@@ -2,7 +2,7 @@ import serial
 import serial.tools.list_ports
 
 from app import CableTesterApplication, COM_STATE
-from cta_middle_frame import update_data_view
+import cta_middle_frame
 
 
 def update_ports_list(self: CableTesterApplication):
@@ -109,7 +109,7 @@ def process_data(self: CableTesterApplication, data: str):
                 response = f"Error processing data: {str(e)}"
 
             # Update the middle frame with the data
-            update_data_view(self, value, response)
+            cta_middle_frame.update_data_view(self, value, response)
 
             # Send response back through COM port
             send_data(self, response)

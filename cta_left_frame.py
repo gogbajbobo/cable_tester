@@ -1,9 +1,9 @@
 from tkinter import ttk
 
 from app import CableTesterApplication
-from cta_tables import update_tables_list, on_table_selected
-from cta_ports import update_ports_list
-from cta_process import start_process, stop_process
+import cta_tables
+import cta_ports
+import cta_process
 
 
 def test_func():
@@ -12,11 +12,11 @@ def test_func():
 
 def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
-    _update_tables_list = lambda: update_tables_list(self)
-    _update_ports_list = lambda: update_ports_list(self)
-    _on_table_selected = lambda event: on_table_selected(self, event)
-    _start_process = lambda: start_process(self)
-    _stop_process = lambda: stop_process(self)
+    _update_tables_list = lambda: cta_tables.update_tables_list(self)
+    _update_ports_list = lambda: cta_ports.update_ports_list(self)
+    _on_table_selected = lambda event: cta_tables.on_table_selected(self, event)
+    _start_process = lambda: cta_process.start_process(self)
+    _stop_process = lambda: cta_process.stop_process(self)
 
     # Tables section
     ttk.Label(frame, text="Tables:").grid(row=0, column=0, padx=5, pady=5, sticky="w")

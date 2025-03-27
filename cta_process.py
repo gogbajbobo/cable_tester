@@ -1,9 +1,9 @@
 import threading
 import time
 
-from cta_ports import open_serial_connection, close_serial_connection, read_data
-from cta_tables import load_selected_table
 from app import CableTesterApplication, COM_STATE
+import cta_tables
+import cta_ports
 
 
 def start_process(self: CableTesterApplication):
@@ -25,8 +25,8 @@ def start_process(self: CableTesterApplication):
             f"Starting process with port {self.selected_port.get()} and table {self.selected_table.get()}"
         )
 
-        load_selected_table(self)
-        open_serial_connection(self)
+        cta_tables.load_selected_table(self)
+        cta_ports.open_serial_connection(self)
 
         # Start the process thread
         self.com_state = COM_STATE.PREINIT
@@ -53,7 +53,7 @@ def stop_process(self: CableTesterApplication):
     if self.thread:
         self.thread.join(timeout=2.0)
 
-    close_serial_connection(self)
+    cta_ports.close_serial_connection(self)
 
 
 def process_loop(self: CableTesterApplication):
@@ -65,7 +65,7 @@ def process_loop(self: CableTesterApplication):
             if not self.serial_connection:
                 raise ValueError("self.serial_connection is None")
 
-            read_data(self)
+            cta_ports.read_data(self)
 
             # Small delay to prevent CPU hogging
             time.sleep(0.01)
