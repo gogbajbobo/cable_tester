@@ -2,6 +2,7 @@ import threading
 import time
 
 from app import CableTesterApplication, COM_STATE
+import cta_left_frame
 import cta_tables
 import cta_ports
 
@@ -30,6 +31,7 @@ def start_process(self: CableTesterApplication):
 
         # Start the process thread
         self.com_state = COM_STATE.PREINIT
+        cta_left_frame.disable_controls(self)
         self.running = True
         self.thread = threading.Thread(target=lambda: process_loop(self))
         self.thread.daemon = True
@@ -48,6 +50,7 @@ def stop_process(self: CableTesterApplication):
     self.log("Stopping process")
     self.running = False
     self.com_state = COM_STATE.NONE
+    cta_left_frame.enable_controls(self)
 
     # Wait for the thread to finish
     if self.thread:
