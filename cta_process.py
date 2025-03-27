@@ -75,6 +75,6 @@ def process_loop(self: CableTesterApplication):
 
         except Exception as e:
             self.log(f"Error in process loop: {str(e)}")
-            self.running = False
+            stop_process(self)
 
     self.log("Process loop ended")
