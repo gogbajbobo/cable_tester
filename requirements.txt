@@ -1,4 +1,5 @@
 pyserial
 pandas
 xlrd
+pillow
 pyinstaller
