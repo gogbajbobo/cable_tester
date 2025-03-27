@@ -1,11 +1,9 @@
 import threading
 import time
-import os
-import pandas as pd
 
-from app import CableTesterApplication, DATA_PATH, COM_STATE
 from cta_ports import open_serial_connection, close_serial_connection, read_data
 from cta_tables import load_selected_table
+from app import CableTesterApplication, COM_STATE
 
 
 def start_process(self: CableTesterApplication):
