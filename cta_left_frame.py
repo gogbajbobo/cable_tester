@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 
 from app import CableTesterApplication
@@ -5,9 +6,7 @@ import cta_tables
 import cta_ports
 import cta_process
 
-
-def test_func():
-    print("test_func")
+STOP_BUTTON = "stop_button"
 
 
 def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
@@ -50,10 +49,24 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     ttk.Button(frame, text="Start Process", command=_start_process).grid(
         row=8, column=0, padx=5, pady=5, sticky="ew"
     )
-    ttk.Button(frame, text="Stop Process", command=_stop_process).grid(
-        row=9, column=0, padx=5, pady=5, sticky="ew"
-    )
+    ttk.Button(
+        frame, text="Stop Process", command=_stop_process, name=STOP_BUTTON
+    ).grid(row=9, column=0, padx=5, pady=5, sticky="ew")
 
     # Update initial ports and tables lists
     self.root.after(0, _update_tables_list)
     self.root.after(0, _update_ports_list)
+
+
+def set_controls_state(self: CableTesterApplication, state: str):
+    for child in self.left_frame.winfo_children():
+        if child.winfo_name() != STOP_BUTTON:
+            child["state"] = state
+
+
+def disable_controls(self: CableTesterApplication):
+    set_controls_state(self, tk.DISABLED)
+
+
+def enable_controls(self: CableTesterApplication):
+    set_controls_state(self, tk.NORMAL)
