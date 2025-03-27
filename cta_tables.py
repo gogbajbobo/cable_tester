@@ -16,11 +16,11 @@ def on_table_selected(self: CableTesterApplication, event=None):
 
     try:
         load_selected_table(self)
+        test_table_data(self)
 
         # Получаем информацию о таблице
         rows, cols = self.table_data.shape
         self.log(f"Table loaded: {rows} rows, {cols} columns")
-        self.log(self.table_data)
 
         # Очищаем текущие данные в Treeview
         for item in self.data_tree.get_children():
@@ -56,7 +56,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
                 self.log(f"Could not update contact count from table: {str(e)}")
 
     except Exception as e:
-        self.log(f"Error loading table {selected_table}: {str(e)}")
+        self.log_error(f"Error loading table {selected_table}: {str(e)}")
 
 
 def update_tables_list(self: CableTesterApplication):
@@ -98,3 +98,11 @@ def load_selected_table(self: CableTesterApplication):
     except Exception as e:
         self.log_error(f"Error loading table: {str(e)}")
         return
+
+
+def test_table_data(self: CableTesterApplication):
+    # print("test_table_data:", self.table_data)
+    test_value = "XS1:1"
+    result = self.table_data.loc[self.table_data["Откуда"] == test_value]
+    print(f"result: {result}")
+    print(f"Куда: {result['Куда'].values}")
