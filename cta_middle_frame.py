@@ -36,11 +36,12 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     else:
         # Если изображений нет, показываем сообщение
         images_canvas.create_text(
-            images_canvas.winfo_width() // 2,
+            10,
             75,
             text="No images found",
             fill="gray",
             font=("Arial", 12),
+            anchor=tk.W,
         )
 
     # Обработчик изменения размера
