@@ -101,8 +101,12 @@ def load_selected_table(self: CableTesterApplication):
 
 
 def test_table_data(self: CableTesterApplication):
-    # print("test_table_data:", self.table_data)
-    test_value = "XS1:1"
-    result = self.table_data.loc[self.table_data["Откуда"] == test_value]
-    print(f"result: {result}")
-    print(f"Куда: {result['Куда'].values}")
+    try:
+        # print("test_table_data:", self.table_data)
+        test_value = "XS1:1"
+        result = self.table_data.loc[self.table_data["Откуда"] == test_value]
+        print(f"result: {result}")
+        print(f"Куда: {result['Куда'].values}")
+    except Exception as e:
+        self.log_error(f"Error test table: {str(e)}")
+        return
