@@ -65,6 +65,8 @@ def process_data(self: CableTesterApplication, data: str):
         # Example implementation:
         value = data.strip()
 
+        # send R to reboot
+
         _contact_count = str(self.contact_count.get())
 
         if self.com_state == COM_STATE.PREINIT:
@@ -84,6 +86,7 @@ def process_data(self: CableTesterApplication, data: str):
             # Look up the value in the table (simplified example)
             try:
                 if value.startswith("P"):
+                    # look column откуда
                     send_data(self, f"test data 1 {value}")
                     send_data(self, f"test data 2 {value}")
                 # Convert to numeric if possible
