@@ -74,37 +74,42 @@ def process_data(self: CableTesterApplication, data: str):
                 self.com_state = COM_STATE.INIT
 
         elif self.com_state == COM_STATE.INIT:
-            if value == _contact_count:
+            if value.startswith("N"):
+                # if value == _contact_count:
+                # check return value
                 self.log(f"Get confirm set to {_contact_count}")
                 self.com_state = COM_STATE.LISTEN
 
         elif self.com_state == COM_STATE.LISTEN:
             # Look up the value in the table (simplified example)
             try:
+                if value.startswith("P"):
+                    send_data(self, f"test data 1 {value}")
+                    send_data(self, f"test data 2 {value}")
                 # Convert to numeric if possible
-                numeric_value = (
-                    float(value) if value.replace(".", "", 1).isdigit() else value
-                )
+                # numeric_value = (
+                #     float(value) if value.replace(".", "", 1).isdigit() else value
+                # )
 
-                # Find matching data in table (this is just an example)
-                # You'll need to adapt this to your actual table structure
-                if isinstance(numeric_value, (int, float)) and numeric_value < len(
-                    self.table_data
-                ):
-                    row_index = int(numeric_value)
-                    table_row = self.table_data.iloc[row_index]
-                    response = str(table_row.to_dict())
-                else:
-                    # Search for the value in the table
-                    found = False
-                    for idx, row in self.table_data.iterrows():
-                        if value in str(row.values):
-                            response = str(row.to_dict())
-                            found = True
-                            break
+                # # Find matching data in table (this is just an example)
+                # # You'll need to adapt this to your actual table structure
+                # if isinstance(numeric_value, (int, float)) and numeric_value < len(
+                #     self.table_data
+                # ):
+                #     row_index = int(numeric_value)
+                #     table_row = self.table_data.iloc[row_index]
+                #     response = str(table_row.to_dict())
+                # else:
+                #     # Search for the value in the table
+                #     found = False
+                #     for idx, row in self.table_data.iterrows():
+                #         if value in str(row.values):
+                #             response = str(row.to_dict())
+                #             found = True
+                #             break
 
-                    if not found:
-                        response = "No matching data found"
+                #     if not found:
+                #         response = "No matching data found"
             except Exception as e:
                 response = f"Error processing data: {str(e)}"
 
