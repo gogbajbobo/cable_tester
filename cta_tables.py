@@ -83,9 +83,12 @@ def update_tables_list(self: CableTesterApplication):
 
     if os.path.isdir(DATA_PATH):
         for file in os.listdir(DATA_PATH):
-            if file.startswith("colors"):
-                continue
-            if (
+            if file.startswith("colors") and file.endswith(".csv"):
+                self.colors_data = pd.read_csv(
+                    os.path.join(DATA_PATH, file), sep=";"
+                )
+                self.log(f"Load colors data:\n{self.colors_data}")
+            elif (
                 file.endswith(".csv")
                 or file.endswith(".xlsx")
                 or file.endswith(".xls")

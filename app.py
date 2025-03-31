@@ -51,6 +51,7 @@ class CableTesterApplication:
         self.data_tree = ttk.Treeview()
         self.logs_text = tk.Text()
         self.table_data = pd.DataFrame()
+        self.colors_data = pd.DataFrame()
         self.serial_connection = serial.Serial()
         self.thread = threading.Thread()
 
