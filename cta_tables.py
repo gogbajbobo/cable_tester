@@ -2,6 +2,7 @@ import os
 import pandas as pd
 
 from app import CableTesterApplication, DATA_PATH
+import cta_middle_frame
 
 
 def on_table_selected(self: CableTesterApplication, event=None):
@@ -119,6 +120,7 @@ def load_selected_table(self: CableTesterApplication):
             self.log_warning(f"Unsupported file format: {st}")
             return
         self.log_info(f"Successfully loaded table: {st}")
+        cta_middle_frame.update_data_view(self)
     except Exception as e:
         self.log_error(f"Error loading table: {str(e)}")
         return
