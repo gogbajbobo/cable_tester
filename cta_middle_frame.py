@@ -65,10 +65,13 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.data_tree.configure(yscrollcommand=scrollbar.set)
 
 
-def update_data_view(self: CableTesterApplication, received, table_data):
+def update_data_view(self: CableTesterApplication):
+    self.log("update_data_view")
+    put_images_into_canvas(self)
+
     """Update the middle frame with received and corresponding table data"""
     # Add to the treeview
-    self.data_tree.insert("", "end", values=(received, table_data))
+    # self.data_tree.insert("", "end", values=(received, table_data))
 
     # Auto-scroll to the bottom
     self.data_tree.yview_moveto(1)
@@ -80,9 +83,8 @@ def update_data_view(self: CableTesterApplication, received, table_data):
 
 
 def put_images_into_canvas(self):
-    # Список путей к изображениям (замените на свои пути)
-    # Можно добавить поиск изображений в директории
     self.image_paths = cta_images.find_images(self)
+    self.images_canvas.delete("all")
 
     # Загрузка и отображение изображений
     if self.image_paths:
@@ -124,6 +126,10 @@ def create_images(
     img_height,
 ):
     for i, img_path in enumerate(image_paths):
+
+        # Вычисляем позицию
+        x_pos = i * img_width
+
         try:
             # Загружаем изображение
             pil_img = cta_images.load_and_resize_image(
@@ -133,22 +139,28 @@ def create_images(
                 tk_img = ImageTk.PhotoImage(pil_img)
                 self.image_references[i] = tk_img  # Обновляем ссылку
 
-                # Вычисляем позицию
-                x_pos = i * img_width
-
                 # Отображаем изображение
                 images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
 
-                # Добавляем подпись (имя файла)
-                file_name = os.path.basename(img_path)
-                images_canvas.create_text(
-                    x_pos + img_width // 2,
-                    img_height - 10,
-                    text=file_name,
-                    fill="black",
-                    font=("Arial", 8),
-                    anchor="s",
-                )
-
         except Exception as e:
+            self.images_canvas.create_text(
+                # 0,
+                x_pos + img_width // 2,
+                img_height // 2,
+                text="No image found",
+                fill="gray",
+                font=("Arial", 12),
+                anchor=tk.S,
+            )
             self.log_error(f"Error loading image {img_path}: {str(e)}")
+
+        # Добавляем подпись (имя файла)
+        file_name = os.path.basename(img_path)
+        images_canvas.create_text(
+            x_pos + img_width // 2,
+            img_height - 10,
+            text=file_name,
+            fill="black",
+            font=("Arial", 8),
+            anchor="s",
+        )
