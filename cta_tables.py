@@ -83,6 +83,8 @@ def update_tables_list(self: CableTesterApplication):
 
     if os.path.isdir(DATA_PATH):
         for file in os.listdir(DATA_PATH):
+            if file.startswith("colors"):
+                continue
             if (
                 file.endswith(".csv")
                 or file.endswith(".xlsx")
