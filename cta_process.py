@@ -3,7 +3,7 @@ import time
 
 from app import CableTesterApplication, COM_STATE
 import cta_left_frame
-import cta_tables
+
 import cta_ports
 
 
@@ -26,7 +26,6 @@ def start_process(self: CableTesterApplication):
             f"Starting process with port {self.selected_port.get()} and table {self.selected_table.get()}"
         )
 
-        cta_tables.load_selected_table(self)
         cta_ports.open_serial_connection(self)
 
         # Start the process thread
