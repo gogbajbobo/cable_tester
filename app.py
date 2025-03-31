@@ -46,6 +46,7 @@ class CableTesterApplication:
 
         # init empty props
         self.left_frame = ttk.LabelFrame()
+        self.images_canvas = tk.Canvas()
         self.tables_combobox = ttk.Combobox()
         self.ports_combobox = ttk.Combobox()
         self.data_tree = ttk.Treeview()
@@ -54,6 +55,7 @@ class CableTesterApplication:
         self.colors_data = pd.DataFrame()
         self.serial_connection = serial.Serial()
         self.thread = threading.Thread()
+        self.image_paths = list()
 
         # Хранилище для ссылок на изображения (чтобы избежать сборки мусора)
         self.image_references: list[ImageTk.PhotoImage | None] = []

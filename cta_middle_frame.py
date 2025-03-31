@@ -6,6 +6,8 @@ from PIL import ImageTk
 from app import CableTesterApplication
 import cta_images
 
+IMAGE_MAX_SIZE = 150
+
 
 def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     # Создаем фрейм для изображений вверху
@@ -13,52 +15,31 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     images_frame.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
 
     # Создаем Canvas для размещения изображений
-    images_canvas = tk.Canvas(images_frame, height=150)
-    images_canvas.pack(fill="x", expand=True)
+    self.images_canvas = tk.Canvas(images_frame, height=IMAGE_MAX_SIZE)
+    self.images_canvas.pack(fill="x", expand=True)
 
-    # Список путей к изображениям (замените на свои пути)
-    # Можно добавить поиск изображений в директории
-    image_paths = cta_images.find_images(self)
-
-    # Загрузка и отображение изображений
-    if image_paths:
-        # Вычисляем размер для каждого изображения
-        img_width = min(
-            150,
-            (images_canvas.winfo_width() or 800) // max(1, len(image_paths)),
-        )
-        img_height = 150
-
-        self.image_references = [None] * len(image_paths)
-        create_images(self, images_canvas, image_paths, img_width, img_height)
-
-        # Обновляем размер canvas, чтобы вместить все изображения
-        images_canvas.config(scrollregion=images_canvas.bbox("all"))
-    else:
-        # Если изображений нет, показываем сообщение
-        images_canvas.create_text(
-            10,
-            75,
-            text="No images found",
-            fill="gray",
-            font=("Arial", 12),
-            anchor=tk.W,
-        )
+    put_images_into_canvas(self)
 
     # Обработчик изменения размера
     def on_canvas_resize(event):
-        if image_paths:
+        if self.image_paths:
             # Очищаем canvas
-            images_canvas.delete("all")
+            self.images_canvas.delete("all")
 
             # Пересчитываем размеры
-            new_img_width = min(150, event.width // max(1, len(image_paths)))
+            new_img_width = min(
+                IMAGE_MAX_SIZE, event.width // max(1, len(self.image_paths))
+            )
             create_images(
-                self, images_canvas, image_paths, new_img_width, img_height
+                self,
+                self.images_canvas,
+                self.image_paths,
+                new_img_width,
+                IMAGE_MAX_SIZE,
             )
 
     # Привязываем обработчик
-    images_canvas.bind("<Configure>", on_canvas_resize)
+    self.images_canvas.bind("<Configure>", on_canvas_resize)
 
     # Data view section with header
     ttk.Label(frame, text="Received Data and Corresponding Table Data:").grid(
@@ -96,6 +77,43 @@ def update_data_view(self: CableTesterApplication, received, table_data):
     items = self.data_tree.get_children()
     if len(items) > 100:  # Keep only the last 100 entries
         self.data_tree.delete(items[0])
+
+
+def put_images_into_canvas(self):
+    # Список путей к изображениям (замените на свои пути)
+    # Можно добавить поиск изображений в директории
+    self.image_paths = cta_images.find_images(self)
+
+    # Загрузка и отображение изображений
+    if self.image_paths:
+        # Вычисляем размер для каждого изображения
+        img_width = min(
+            IMAGE_MAX_SIZE,
+            (self.images_canvas.winfo_width() or 800)
+            // max(1, len(self.image_paths)),
+        )
+
+        self.image_references = [None] * len(self.image_paths)
+        create_images(
+            self,
+            self.images_canvas,
+            self.image_paths,
+            img_width,
+            IMAGE_MAX_SIZE,
+        )
+
+        # Обновляем размер canvas, чтобы вместить все изображения
+        self.images_canvas.config(scrollregion=self.images_canvas.bbox("all"))
+    else:
+        # Если изображений нет, показываем сообщение
+        self.images_canvas.create_text(
+            10,
+            75,
+            text="No images found",
+            fill="gray",
+            font=("Arial", 12),
+            anchor=tk.W,
+        )
 
 
 def create_images(
