@@ -21,15 +21,14 @@ def find_images(self: CableTesterApplication):
     return image_paths
 
 
-def load_and_resize_image(image_path, width, height):
-    """Загружает и изменяет размер изображения"""
-    # from PIL import Image
+def load_image(image_path):
+    img = Image.open(image_path)
+    return img
 
+
+def resize_image(img, width, height):
     if (width == 0) or (height == 0):
         return None
-
-    # Загружаем изображение
-    img = Image.open(image_path)
 
     # Вычисляем соотношение сторон
     img_ratio = img.width / img.height
@@ -46,3 +45,8 @@ def load_and_resize_image(image_path, width, height):
     img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
     return img
+
+
+def load_and_resize_image(image_path, width, height):
+    img = load_image(image_path)
+    return resize_image(img, width, height)
