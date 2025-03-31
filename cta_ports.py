@@ -2,7 +2,8 @@ import serial
 import serial.tools.list_ports
 
 from app import CableTesterApplication, COM_STATE
-import cta_middle_frame
+
+# import cta_middle_frame
 
 
 def update_ports_list(self: CableTesterApplication):
@@ -30,12 +31,16 @@ def open_serial_connection(self: CableTesterApplication):
         self.log_info(
             f"Successfully opened COM port: {self.selected_port.get()}"
         )
+        # send R to reboot device
+        send_data(self, "R")
     except Exception as e:
         self.log_error(f"Error opening COM port: {str(e)}")
         return
 
 
 def close_serial_connection(self: CableTesterApplication):
+    # send R to reboot device
+    send_data(self, "R")
     # Close the serial connection
     if self.serial_connection and self.serial_connection.is_open:
         self.serial_connection.close()
@@ -66,8 +71,6 @@ def process_data(self: CableTesterApplication, data: str):
 
         # Example implementation:
         value = data.strip()
-
-        # send R to reboot
 
         _contact_count = int(self.contact_count.get())
 
