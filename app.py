@@ -69,7 +69,9 @@ class CableTesterApplication:
         log_message = f"[{timestamp}] {message}\n"
 
         # Use after to ensure thread safety when updating the UI
-        self.root.after(0, lambda: self.logs_text.insert(tk.END, log_message, tag))
+        self.root.after(
+            0, lambda: self.logs_text.insert(tk.END, log_message, tag)
+        )
         self.root.after(0, lambda: self.logs_text.see(tk.END))
 
         # Print to console as well for debugging

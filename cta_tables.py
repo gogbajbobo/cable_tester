@@ -31,10 +31,16 @@ def on_table_selected(self: CableTesterApplication, event=None):
         preview_rows = rows
         for i in range(preview_rows):
             row = self.table_data.iloc[i]
-            preview = str(dict(zip(self.table_data.columns[:3], row.values[:3])))
+            preview = str(
+                dict(zip(self.table_data.columns[:3], row.values[:3]))
+            )
             if len(self.table_data.columns) > 3:
-                preview += " ... "  # добавляем многоточие, если есть больше столбцов
-            self.data_tree.insert("", "end", values=(f"Preview Row {i}", preview))
+                preview += (
+                    " ... "  # добавляем многоточие, если есть больше столбцов
+                )
+            self.data_tree.insert(
+                "", "end", values=(f"Preview Row {i}", preview)
+            )
 
         # Если таблица содержит информацию о контактах, обновляем соответствующее поле
         if (
@@ -42,18 +48,24 @@ def on_table_selected(self: CableTesterApplication, event=None):
             or "Contacts" in self.table_data.columns
         ):
             contact_col = (
-                "contacts" if "contacts" in self.table_data.columns else "Contacts"
+                "contacts"
+                if "contacts" in self.table_data.columns
+                else "Contacts"
             )
             # Берем максимальное значение из столбца контактов, если это число
             try:
                 max_contacts = self.table_data[contact_col].max()
-                if pd.notna(max_contacts) and isinstance(max_contacts, (int, float)):
+                if pd.notna(max_contacts) and isinstance(
+                    max_contacts, (int, float)
+                ):
                     self.contact_count.set(int(max_contacts))
                     self.log(
                         f"Updated contact count to {max_contacts} based on table data"
                     )
             except Exception as e:
-                self.log(f"Could not update contact count from table: {str(e)}")
+                self.log(
+                    f"Could not update contact count from table: {str(e)}"
+                )
 
     except Exception as e:
         self.log_error(f"Error loading table {selected_table}: {str(e)}")
@@ -71,7 +83,11 @@ def update_tables_list(self: CableTesterApplication):
 
     if os.path.isdir(DATA_PATH):
         for file in os.listdir(DATA_PATH):
-            if file.endswith(".csv") or file.endswith(".xlsx") or file.endswith(".xls"):
+            if (
+                file.endswith(".csv")
+                or file.endswith(".xlsx")
+                or file.endswith(".xls")
+            ):
                 self.tables_list.append(file)
     else:
         self.log_error(f"Have no data dir {DATA_PATH}")

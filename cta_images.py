@@ -18,7 +18,9 @@ def find_images(self: CableTesterApplication):
 
         # Ограничиваем количество изображений (опционально)
         if len(image_paths) > 5:
-            self.log_warning(f"Found {len(image_paths)} images, showing first 5")
+            self.log_warning(
+                f"Found {len(image_paths)} images, showing first 5"
+            )
             image_paths = image_paths[:5]
         else:
             self.log(f"Found {len(image_paths)} images")

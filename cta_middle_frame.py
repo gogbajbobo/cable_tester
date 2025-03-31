@@ -24,7 +24,8 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     if image_paths:
         # Вычисляем размер для каждого изображения
         img_width = min(
-            150, (images_canvas.winfo_width() or 800) // max(1, len(image_paths))
+            150,
+            (images_canvas.winfo_width() or 800) // max(1, len(image_paths)),
         )
         img_height = 150
 
@@ -52,7 +53,9 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
             # Пересчитываем размеры
             new_img_width = min(150, event.width // max(1, len(image_paths)))
-            create_images(self, images_canvas, image_paths, new_img_width, img_height)
+            create_images(
+                self, images_canvas, image_paths, new_img_width, img_height
+            )
 
     # Привязываем обработчик
     images_canvas.bind("<Configure>", on_canvas_resize)
@@ -74,7 +77,9 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.data_tree.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
 
     # Add scrollbar
-    scrollbar = ttk.Scrollbar(frame, orient="vertical", command=self.data_tree.yview)
+    scrollbar = ttk.Scrollbar(
+        frame, orient="vertical", command=self.data_tree.yview
+    )
     scrollbar.grid(row=2, column=1, sticky="ns")
     self.data_tree.configure(yscrollcommand=scrollbar.set)
 
@@ -103,7 +108,9 @@ def create_images(
     for i, img_path in enumerate(image_paths):
         try:
             # Загружаем изображение
-            pil_img = cta_images.load_and_resize_image(img_path, img_width, img_height)
+            pil_img = cta_images.load_and_resize_image(
+                img_path, img_width, img_height
+            )
             if pil_img:
                 tk_img = ImageTk.PhotoImage(pil_img)
                 self.image_references[i] = tk_img  # Обновляем ссылку

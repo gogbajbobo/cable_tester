@@ -13,16 +13,22 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     _update_tables_list = lambda: cta_tables.update_tables_list(self)
     _update_ports_list = lambda: cta_ports.update_ports_list(self)
-    _on_table_selected = lambda event: cta_tables.on_table_selected(self, event)
+    _on_table_selected = lambda event: cta_tables.on_table_selected(
+        self, event
+    )
     _start_process = lambda: cta_process.start_process(self)
     _stop_process = lambda: cta_process.stop_process(self)
 
     # Tables section
-    ttk.Label(frame, text="Tables:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
-    ttk.Button(frame, text="Update Tables List", command=_update_tables_list).grid(
-        row=1, column=0, padx=5, pady=5, sticky="ew"
+    ttk.Label(frame, text="Tables:").grid(
+        row=0, column=0, padx=5, pady=5, sticky="w"
     )
-    self.tables_combobox = ttk.Combobox(frame, textvariable=self.selected_table)
+    ttk.Button(
+        frame, text="Update Tables List", command=_update_tables_list
+    ).grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+    self.tables_combobox = ttk.Combobox(
+        frame, textvariable=self.selected_table
+    )
     self.tables_combobox.grid(row=2, column=0, padx=5, pady=5, sticky="ew")
     # Привязываем обработчик события выбора
     self.tables_combobox.bind("<<ComboboxSelected>>", _on_table_selected)
@@ -31,9 +37,9 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     ttk.Label(frame, text="COM Ports:").grid(
         row=3, column=0, padx=5, pady=5, sticky="w"
     )
-    ttk.Button(frame, text="Update COM Ports List", command=_update_ports_list).grid(
-        row=4, column=0, padx=5, pady=5, sticky="ew"
-    )
+    ttk.Button(
+        frame, text="Update COM Ports List", command=_update_ports_list
+    ).grid(row=4, column=0, padx=5, pady=5, sticky="ew")
     self.ports_combobox = ttk.Combobox(frame, textvariable=self.selected_port)
     self.ports_combobox.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
 
