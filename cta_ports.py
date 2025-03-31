@@ -27,7 +27,9 @@ def open_serial_connection(self: CableTesterApplication):
             baudrate=9600,  # You may need to adjust this
             timeout=1,
         )
-        self.log_info(f"Successfully opened COM port: {self.selected_port.get()}")
+        self.log_info(
+            f"Successfully opened COM port: {self.selected_port.get()}"
+        )
     except Exception as e:
         self.log_error(f"Error opening COM port: {str(e)}")
         return
@@ -67,7 +69,7 @@ def process_data(self: CableTesterApplication, data: str):
 
         # send R to reboot
 
-        _contact_count = str(self.contact_count.get())
+        _contact_count = int(self.contact_count.get())
 
         if self.com_state == COM_STATE.PREINIT:
             if value == "?":
@@ -76,51 +78,37 @@ def process_data(self: CableTesterApplication, data: str):
                 self.com_state = COM_STATE.INIT
 
         elif self.com_state == COM_STATE.INIT:
+            # Nx — return accepted contact_count (x) value
+            # Tx — return contact_count value is too big
             if value.startswith("N"):
-                # if value == _contact_count:
-                # check return value
-                self.log(f"Get confirm set to {_contact_count}")
-                self.com_state = COM_STATE.LISTEN
+                _value = int(value.removeprefix("N"))
+                if _value == _contact_count:
+                    self.log(f"Get confirm set to {_contact_count}")
+                    self.com_state = COM_STATE.LISTEN
+                else:
+                    raise ValueError(
+                        "Confirm contact count differ from the origin"
+                    )
+            elif value.startswith("T"):
+                raise ValueError("Set to many contact count")
+            else:
+                raise ValueError(f"Receive unexpected value: {value}")
 
         elif self.com_state == COM_STATE.LISTEN:
             # Look up the value in the table (simplified example)
-            try:
-                if value.startswith("P"):
-                    # look column откуда
-                    send_data(self, f"test data 1 {value}")
-                    send_data(self, f"test data 2 {value}")
-                # Convert to numeric if possible
-                # numeric_value = (
-                #     float(value) if value.replace(".", "", 1).isdigit() else value
-                # )
-
-                # # Find matching data in table (this is just an example)
-                # # You'll need to adapt this to your actual table structure
-                # if isinstance(numeric_value, (int, float)) and numeric_value < len(
-                #     self.table_data
-                # ):
-                #     row_index = int(numeric_value)
-                #     table_row = self.table_data.iloc[row_index]
-                #     response = str(table_row.to_dict())
-                # else:
-                #     # Search for the value in the table
-                #     found = False
-                #     for idx, row in self.table_data.iterrows():
-                #         if value in str(row.values):
-                #             response = str(row.to_dict())
-                #             found = True
-                #             break
-
-                #     if not found:
-                #         response = "No matching data found"
-            except Exception as e:
-                response = f"Error processing data: {str(e)}"
+            if value.startswith("P"):
+                _value = int(value.removeprefix("P"))
+                # look column откуда
+                send_data(self, f"test data 1 {_value}")
+                send_data(self, f"test data 2 {_value}")
+            else:
+                raise ValueError(f"Receive unexpected value: {value}")
 
             # Update the middle frame with the data
-            cta_middle_frame.update_data_view(self, value, response)
+            # cta_middle_frame.update_data_view(self, value, response)
 
             # Send response back through COM port
-            send_data(self, response)
+            # send_data(self, response)
 
     except Exception as e:
         self.log(f"Error processing data: {str(e)}")
