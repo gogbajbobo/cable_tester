@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import os
-from PIL import ImageTk
 
 from app import CableTesterApplication
 import cta_images
@@ -33,7 +32,6 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
             create_images(
                 self,
                 self.images_canvas,
-                self.image_paths,
                 new_img_width,
                 IMAGE_MAX_SIZE,
             )
@@ -100,7 +98,6 @@ def put_images_into_canvas(self):
         create_images(
             self,
             self.images_canvas,
-            self.image_paths,
             img_width,
             IMAGE_MAX_SIZE,
         )
@@ -122,31 +119,16 @@ def put_images_into_canvas(self):
 def create_images(
     self: CableTesterApplication,
     images_canvas: tk.Canvas,
-    image_paths,
     img_width,
     img_height,
 ):
-    for i, img_path in enumerate(image_paths):
+    cta_images.prepare_images_for_canvas(self, img_width, img_height)
 
-        # Вычисляем позицию
+    for i, tk_img in enumerate(self.image_references):
         x_pos = i * img_width
-
-        try:
-            # Загружаем изображение
-            # pil_img = cta_images.load_and_resize_image(
-            #     img_path, img_width, img_height
-            # )
-            pil_img = cta_images.resize_image(
-                self.loaded_images[i], img_width, img_height
-            )
-            if pil_img:
-                tk_img = ImageTk.PhotoImage(pil_img)
-                self.image_references[i] = tk_img  # Обновляем ссылку
-
-                # Отображаем изображение
-                images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
-
-        except Exception as e:
+        if tk_img:
+            images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
+        else:
             self.images_canvas.create_text(
                 # 0,
                 x_pos + img_width // 2,
@@ -156,10 +138,9 @@ def create_images(
                 font=("Arial", 12),
                 anchor=tk.S,
             )
-            self.log_error(f"Error loading image {img_path}: {str(e)}")
 
         # Добавляем подпись (имя файла)
-        file_name = os.path.basename(img_path)
+        file_name = os.path.basename(self.image_paths[i])
         images_canvas.create_text(
             x_pos + img_width // 2,
             img_height - 10,

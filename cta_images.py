@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ImageTk
 
 from app import CableTesterApplication, DATA_PATH
 
@@ -21,7 +21,7 @@ def find_images(self: CableTesterApplication):
             try:
                 self.loaded_images[i] = load_image(im_path)
             except Exception as e:
-                self.log_error(f"Can't load image {im_file}")
+                self.log_error(f"Can't load image {im_file}: {str(e)}")
                 self.loaded_images[i] = None
 
         self.log(f"Found {len(image_paths)} images")
@@ -55,6 +55,13 @@ def resize_image(img: Image.Image | None, width, height) -> Image.Image | None:
     return img
 
 
-def load_and_resize_image(image_path, width, height) -> Image.Image | None:
-    img = load_image(image_path)
-    return resize_image(img, width, height)
+def prepare_images_for_canvas(
+    self: CableTesterApplication, img_width, img_height
+):
+    for i, loaded_image in enumerate(self.loaded_images):
+        pil_img = resize_image(loaded_image, img_width, img_height)
+        if pil_img:
+            tk_img = ImageTk.PhotoImage(pil_img)
+            self.image_references[i] = tk_img  # Обновляем ссылку
+        else:
+            self.image_references[i] = None
