@@ -24,17 +24,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         if self.image_paths:
             # Очищаем canvas
             self.images_canvas.delete("all")
-
-            # Пересчитываем размеры
-            new_img_width = min(
-                IMAGE_MAX_SIZE, event.width // max(1, len(self.image_paths))
-            )
-            create_images(
-                self,
-                self.images_canvas,
-                new_img_width,
-                IMAGE_MAX_SIZE,
-            )
+            update_canvas_with_images(self)
 
     # Привязываем обработчик
     self.images_canvas.bind("<Configure>", on_canvas_resize)
@@ -80,27 +70,29 @@ def update_data_view(self: CableTesterApplication):
         self.data_tree.delete(items[0])
 
 
+def update_canvas_with_images(self: CableTesterApplication):
+    # Вычисляем размер для каждого изображения
+    img_width = min(
+        IMAGE_MAX_SIZE,
+        (self.images_canvas.winfo_width() or 800)
+        // max(1, len(self.image_paths)),
+    )
+    create_images(
+        self,
+        self.images_canvas,
+        img_width,
+        IMAGE_MAX_SIZE,
+    )
+
+
 def put_images_into_canvas(self):
     self.image_paths = cta_images.find_images(self)
     self.images_canvas.delete("all")
 
     # Загрузка и отображение изображений
     if self.image_paths:
-        # Вычисляем размер для каждого изображения
-        img_width = min(
-            IMAGE_MAX_SIZE,
-            (self.images_canvas.winfo_width() or 800)
-            // max(1, len(self.image_paths)),
-        )
-
         self.image_references = [None] * len(self.image_paths)
-
-        create_images(
-            self,
-            self.images_canvas,
-            img_width,
-            IMAGE_MAX_SIZE,
-        )
+        update_canvas_with_images(self)
 
         # Обновляем размер canvas, чтобы вместить все изображения
         self.images_canvas.config(scrollregion=self.images_canvas.bbox("all"))
