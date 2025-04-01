@@ -13,21 +13,29 @@ def find_images(self: CableTesterApplication):
         images = self.table_data["Изображение"].dropna().to_list()
         self.log(f"self.table_data['Изображение']\n{images}")
 
-        for im_file in images:
-            image_paths.append(os.path.join(DATA_PATH, im_file.lower()))
+        self.loaded_images = [None] * len(images)
+
+        for i, im_file in enumerate(images):
+            im_path = os.path.join(DATA_PATH, im_file.lower())
+            image_paths.append(im_path)
+            try:
+                self.loaded_images[i] = load_image(im_path)
+            except Exception as e:
+                self.log_error(f"Can't load image {im_file}")
+                self.loaded_images[i] = None
 
         self.log(f"Found {len(image_paths)} images")
 
     return image_paths
 
 
-def load_image(image_path):
+def load_image(image_path) -> Image.Image:
     img = Image.open(image_path)
     return img
 
 
-def resize_image(img, width, height):
-    if (width == 0) or (height == 0):
+def resize_image(img: Image.Image | None, width, height) -> Image.Image | None:
+    if (img is None) or (width == 0) or (height == 0):
         return None
 
     # Вычисляем соотношение сторон
@@ -47,6 +55,6 @@ def resize_image(img, width, height):
     return img
 
 
-def load_and_resize_image(image_path, width, height):
+def load_and_resize_image(image_path, width, height) -> Image.Image | None:
     img = load_image(image_path)
     return resize_image(img, width, height)

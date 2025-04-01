@@ -6,7 +6,7 @@ import threading
 import os
 import pandas as pd
 from datetime import datetime
-from PIL import ImageTk
+from PIL import ImageTk, Image
 from enum import Enum
 
 import cta_layout
@@ -59,6 +59,7 @@ class CableTesterApplication:
 
         # Хранилище для ссылок на изображения (чтобы избежать сборки мусора)
         self.image_references: list[ImageTk.PhotoImage | None] = []
+        self.loaded_images: list[Image.Image | None] = []
 
         # Create the main layout
         cta_layout.create_layout(self)

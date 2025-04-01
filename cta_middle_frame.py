@@ -96,6 +96,7 @@ def put_images_into_canvas(self):
         )
 
         self.image_references = [None] * len(self.image_paths)
+
         create_images(
             self,
             self.images_canvas,
@@ -132,8 +133,11 @@ def create_images(
 
         try:
             # Загружаем изображение
-            pil_img = cta_images.load_and_resize_image(
-                img_path, img_width, img_height
+            # pil_img = cta_images.load_and_resize_image(
+            #     img_path, img_width, img_height
+            # )
+            pil_img = cta_images.resize_image(
+                self.loaded_images[i], img_width, img_height
             )
             if pil_img:
                 tk_img = ImageTk.PhotoImage(pil_img)
