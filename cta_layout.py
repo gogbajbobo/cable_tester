@@ -19,8 +19,8 @@ def create_layout(self: CableTesterApplication):
     # Вложенный PanedWindow для средней и правой частей
     right_paned = tk.PanedWindow(main_paned, orient=tk.HORIZONTAL)
 
-    middle_frame = ttk.LabelFrame(right_paned, text="Data View")
-    right_frame = ttk.LabelFrame(right_paned, text="System Information")
+    middle_frame = ttk.LabelFrame(right_paned, text="Connectors")
+    right_frame = ttk.LabelFrame(right_paned, text="Information")
 
     # Добавляем фреймы в соответствующие PanedWindow
     main_paned.add(self.left_frame)

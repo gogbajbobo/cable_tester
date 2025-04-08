@@ -30,7 +30,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.images_canvas.bind("<Configure>", on_canvas_resize)
 
     # Data view section with header
-    ttk.Label(frame, text="Received Data and Corresponding Table Data:").grid(
+    ttk.Label(frame, text="Table Data:").grid(
         row=1, column=0, padx=5, pady=5, sticky="w"
     )
 
