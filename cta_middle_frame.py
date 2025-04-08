@@ -35,13 +35,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     )
 
     # Create Treeview for data display
-    columns = ("Received Data", "Table Data")
-    self.data_tree = ttk.Treeview(frame, columns=columns, show="headings")
-
-    # Set column headings
-    for col in columns:
-        self.data_tree.heading(col, text=col)
-        self.data_tree.column(col, width=150)
+    self.data_tree = ttk.Treeview(frame, columns=(), show="headings")
 
     self.data_tree.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
 

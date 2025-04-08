@@ -27,46 +27,19 @@ def on_table_selected(self: CableTesterApplication, event=None):
         for item in self.data_tree.get_children():
             self.data_tree.delete(item)
 
-        # Опционально: Показываем превью таблицы (первые несколько строк)
-        # preview_rows = min(5, rows)  # показываем максимум 5 строк для превью
-        preview_rows = rows
-        for i in range(preview_rows):
-            row = self.table_data.iloc[i]
-            preview = str(
-                dict(zip(self.table_data.columns[:3], row.values[:3]))
-            )
-            if len(self.table_data.columns) > 3:
-                preview += (
-                    " ... "  # добавляем многоточие, если есть больше столбцов
-                )
-            self.data_tree.insert(
-                "", "end", values=(f"Preview Row {i}", preview)
-            )
+        columns = tuple(self.table_data.columns)[:-2]
 
-        # Если таблица содержит информацию о контактах, обновляем соответствующее поле
-        if (
-            "contacts" in self.table_data.columns
-            or "Contacts" in self.table_data.columns
-        ):
-            contact_col = (
-                "contacts"
-                if "contacts" in self.table_data.columns
-                else "Contacts"
-            )
-            # Берем максимальное значение из столбца контактов, если это число
-            try:
-                max_contacts = self.table_data[contact_col].max()
-                if pd.notna(max_contacts) and isinstance(
-                    max_contacts, (int, float)
-                ):
-                    self.contact_count.set(int(max_contacts))
-                    self.log(
-                        f"Updated contact count to {max_contacts} based on table data"
-                    )
-            except Exception as e:
-                self.log(
-                    f"Could not update contact count from table: {str(e)}"
-                )
+        self.data_tree["columns"] = columns
+
+        # Set column headings
+        for col in columns:
+            self.data_tree.heading(col, text=col)
+            self.data_tree.column(col, width=150)
+
+        for i in range(rows):
+            row = self.table_data.iloc[i][:-2]
+            row_data = [data for data in row.fillna("").values]
+            self.data_tree.insert("", "end", values=row_data)
 
     except Exception as e:
         self.log_error(f"Error loading table {selected_table}: {str(e)}")
@@ -113,9 +86,9 @@ def load_selected_table(self: CableTesterApplication):
     st = os.path.join(DATA_PATH, self.selected_table.get())
     try:
         if st.endswith(".csv"):
-            self.table_data = pd.read_csv(st, sep=";")
+            self.table_data = pd.read_csv(st, sep=";", dtype=str)
         elif st.endswith(".xlsx") or st.endswith(".xls"):
-            self.table_data = pd.read_excel(st)
+            self.table_data = pd.read_excel(st, dtype=str)
         else:
             self.log_warning(f"Unsupported file format: {st}")
             return
