@@ -32,7 +32,7 @@ class CableTesterApplication:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("Cable tester")
-        self.root.geometry("1200x700")
+        self.root.geometry("1280x1024")
 
         # Variables
         self.selected_table = tk.StringVar()
@@ -56,6 +56,11 @@ class CableTesterApplication:
         self.serial_connection = serial.Serial()
         self.thread = threading.Thread()
         self.image_paths = list()
+        self.status_img_references = list()
+        self.status_line1 = tk.StringVar()
+        self.status_line2 = tk.StringVar()
+        self.status_label1 = ttk.Label()
+        self.status_label2 = ttk.Label()
 
         # Хранилище для ссылок на изображения (чтобы избежать сборки мусора)
         self.image_references: list[ImageTk.PhotoImage | None] = []
