@@ -109,7 +109,9 @@ def construct_line(v1: str, v2: str, max_len=16):
     return line
 
 
-def find_value_in_table(self: CableTesterApplication, value: str):
+def find_value_in_table(
+    self: CableTesterApplication, value: str
+) -> tuple[str, str] | None:
     try:
         result = self.table_data.loc[
             self.table_data["Откуда"].str.endswith(f":{value}")
