@@ -52,14 +52,14 @@ def read_data(self: CableTesterApplication):
         # Read data from COM port
         data = self.serial_connection.readline().strip()
 
+        # Log received data
+        self.log(f"Received: {data}")
+
         # Convert bytes to string if needed
         if isinstance(data, bytes):
             data = data.decode("utf-8", errors="replace")
             # Process the data and send response
             process_data(self, data)
-
-        # Log received data
-        self.log(f"Received: {data}")
 
 
 def process_data(self: CableTesterApplication, data: str):
