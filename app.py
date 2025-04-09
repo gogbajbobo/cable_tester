@@ -56,6 +56,7 @@ class CableTesterApplication:
         self.serial_connection = serial.Serial()
         self.thread = threading.Thread()
         self.image_paths = list()
+        self.process_frame = ttk.LabelFrame()
         self.status_img_references = list()
         self.status_line1 = tk.StringVar()
         self.status_line2 = tk.StringVar()

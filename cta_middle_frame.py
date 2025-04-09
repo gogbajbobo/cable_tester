@@ -4,6 +4,7 @@ import os
 
 from app import CableTesterApplication
 import cta_images
+import cta_process_frame
 
 IMAGE_MAX_SIZE = 150
 
@@ -47,51 +48,12 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.data_tree.configure(yscrollcommand=scrollbar.set)
 
     # Создаем фрейм для нижней части
-    bottom_frame = ttk.LabelFrame(frame, text="Process Information")
-    bottom_frame.grid(
+    self.process_frame = ttk.LabelFrame(frame, text="Process Information")
+    self.process_frame.grid(
         row=3, column=0, padx=5, pady=10, sticky="nsew", columnspan=2
     )
 
-    # Создаем фрейм для двух изображений
-    img_status_frame = ttk.Frame(bottom_frame)
-    img_status_frame.pack(fill="x", padx=5, pady=5)
-
-    # Создаем левую и правую части для изображений
-    left_img_frame = ttk.LabelFrame(img_status_frame, text="Откуда")
-    left_img_frame.pack(side="left", fill="both", expand=True, padx=5, pady=5)
-
-    right_img_frame = ttk.LabelFrame(img_status_frame, text="Куда")
-    right_img_frame.pack(
-        side="right", fill="both", expand=True, padx=5, pady=5
-    )
-
-    cta_images.load_process_images(self, left_img_frame, right_img_frame)
-
-    # Создаем фрейм для текстовой информации
-    text_status_frame = ttk.Frame(bottom_frame)
-    text_status_frame.pack(fill="x", padx=5, pady=10)
-
-    # Создаем метки с большим жирным шрифтом
-    status_font = ("Arial", 16, "bold")
-
-    self.status_line1 = tk.StringVar(value="Маркировка:")
-    self.status_line2 = tk.StringVar(value="Цвет: ")
-
-    self.status_label1 = ttk.Label(
-        text_status_frame,
-        textvariable=self.status_line1,
-        font=status_font,
-        foreground="blue",
-    )
-    self.status_label1.pack(fill="x", pady=5)
-
-    self.status_label2 = ttk.Label(
-        text_status_frame,
-        textvariable=self.status_line2,
-        font=status_font,
-        foreground="darkgreen",
-    )
-    self.status_label2.pack(fill="x", pady=5)
+    cta_process_frame.setup_process_frame(self)
 
 
 def update_data_view(self: CableTesterApplication):
@@ -182,14 +144,3 @@ def create_images(
             font=("Arial", 8),
             anchor="s",
         )
-
-
-# Методы для обновления статуса
-def update_status_line1(self: CableTesterApplication, text, color="blue"):
-    self.status_line1.set(text)
-    self.status_label1.configure(foreground=color)
-
-
-def update_status_line2(self: CableTesterApplication, text, color="darkgreen"):
-    self.status_line2.set(text)
-    self.status_label2.configure(foreground=color)
