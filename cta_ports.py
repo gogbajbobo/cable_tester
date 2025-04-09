@@ -71,7 +71,7 @@ def process_data(self: CableTesterApplication, data: str):
         # Example implementation:
         value = data.strip()
 
-        _contact_count = int(self.contact_count.get())
+        _contact_count = self.contact_count.get()
 
         if self.com_state == COM_STATE.PREINIT:
             if value == "?":
@@ -83,8 +83,8 @@ def process_data(self: CableTesterApplication, data: str):
             # Nx — return accepted contact_count (x) value
             # Tx — return contact_count value is too big
             if value.startswith("N"):
-                _value = int(value.removeprefix("N"))
-                if _value == _contact_count:
+                _value = value.removeprefix("N")
+                if str(_value) == str(_contact_count):
                     self.log(f"Get confirm set to {_contact_count}")
                     self.com_state = COM_STATE.LISTEN
                 else:
@@ -125,9 +125,7 @@ def send_data(self: CableTesterApplication, data):
     """Send data to the COM port"""
     if self.serial_connection and self.serial_connection.is_open:
         try:
-            # Convert to bytes if it's a string
-            if isinstance(data, str):
-                data = (data + "\n").encode("utf-8")
+            data = (str(data) + "\n").encode("utf-8")
 
             self.serial_connection.write(data)
             self.log(f"Sent: {data}")
