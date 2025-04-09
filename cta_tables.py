@@ -17,7 +17,6 @@ def on_table_selected(self: CableTesterApplication, event=None):
 
     try:
         load_selected_table(self)
-        test_table_data(self)
 
         # Получаем информацию о таблице
         rows, cols = self.table_data.shape
@@ -40,6 +39,8 @@ def on_table_selected(self: CableTesterApplication, event=None):
             row = self.table_data.iloc[i][:-2]
             row_data = [data for data in row.fillna("").values]
             self.data_tree.insert("", "end", values=row_data)
+
+        find_value_in_table(self, "1")
 
     except Exception as e:
         self.log_error(f"Error loading table {selected_table}: {str(e)}")
@@ -99,13 +100,29 @@ def load_selected_table(self: CableTesterApplication):
         return
 
 
-def test_table_data(self: CableTesterApplication):
+def find_value_in_table(self: CableTesterApplication, value: str):
     try:
-        # print("test_table_data:", self.table_data)
-        test_value = "XS1:1"
-        result = self.table_data.loc[self.table_data["Откуда"] == test_value]
-        print(f"result: {result}")
-        print(f"Куда: {result['Куда'].values}")
+        result = self.table_data.loc[
+            self.table_data["Откуда"].str.endswith(f":{value}")
+        ]
+        if result.empty:
+            self.log_warning(f"Value {value} not found in table.")
+            return
+
+        idx = result.index[0]
+
+        rows = self.data_tree.get_children()
+        if len(rows) > idx:
+            child_id = rows[idx]
+            self.data_tree.selection_set(child_id)
+
+        from_value = result["Откуда"].values[0]
+        to_value = result["Куда"].values[0]
+
+        self.log_info(f"Откуда: {from_value}")
+        self.log_info(f"Куда: {to_value}")
+        return from_value, to_value
+
     except Exception as e:
         self.log_error(f"Error test table: {str(e)}")
         return
