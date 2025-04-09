@@ -149,7 +149,9 @@ def find_value_in_table(
         self.log_info(f"Цвет: {color_value}")
         self.log_info(f"Откуда: {from_value}")
 
-        cta_process_frame.update_process_frame(self, from_value, to_value)
+        cta_process_frame.update_process_frame(
+            self, from_value, to_value, mark_value, color_value
+        )
 
         line_1 = construct_line(mark_value, to_value)
         line_2 = construct_line(color_value, from_value)

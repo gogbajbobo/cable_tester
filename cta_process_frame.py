@@ -11,6 +11,8 @@ def update_process_frame(
     self: CableTesterApplication,
     conn_value_1: str | None = None,
     conn_value_2: str | None = None,
+    mark_value: str | None = None,
+    color_value: str | None = None,
 ):
 
     for w in self.process_frame.winfo_children():
@@ -40,8 +42,8 @@ def update_process_frame(
     # Создаем метки с большим жирным шрифтом
     status_font = ("Arial", 16, "bold")
 
-    self.status_line1 = tk.StringVar(value="Маркировка:")
-    self.status_line2 = tk.StringVar(value="Цвет: ")
+    self.status_line1 = tk.StringVar(value=f"Маркировка: {mark_value}")
+    self.status_line2 = tk.StringVar(value=f"Цвет: {color_value}")
 
     self.status_label1 = ttk.Label(
         text_status_frame,
