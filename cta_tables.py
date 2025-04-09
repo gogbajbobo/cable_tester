@@ -60,7 +60,7 @@ def update_tables_list(self: CableTesterApplication):
         for file in os.listdir(DATA_PATH):
             if file.startswith("colors") and file.endswith(".csv"):
                 self.colors_data = pd.read_csv(
-                    os.path.join(DATA_PATH, file), sep=";"
+                    os.path.join(DATA_PATH, file), sep=";", dtype=str
                 )
                 self.log(f"Load colors data:\n{self.colors_data}")
             elif (
@@ -100,6 +100,15 @@ def load_selected_table(self: CableTesterApplication):
         return
 
 
+def construct_line(v1: str, v2: str, max_len=16):
+    line = " ".join([v1, v2])
+    if len(line) > max_len:
+        idx = max_len - len(v2) - 1
+        v1 = v1[:idx]
+        line = " ".join([v1, v2])
+    return line
+
+
 def find_value_in_table(self: CableTesterApplication, value: str):
     try:
         result = self.table_data.loc[
@@ -109,6 +118,8 @@ def find_value_in_table(self: CableTesterApplication, value: str):
             self.log_warning(f"Value {value} not found in table.")
             return
 
+        result.fillna("", inplace=True)
+
         idx = result.index[0]
 
         rows = self.data_tree.get_children()
@@ -116,12 +127,28 @@ def find_value_in_table(self: CableTesterApplication, value: str):
             child_id = rows[idx]
             self.data_tree.selection_set(child_id)
 
+        mark_value = result["Маркировка"].values[0]
         from_value = result["Откуда"].values[0]
         to_value = result["Куда"].values[0]
+        color_value = result["Цвет"].values[0]
 
-        self.log_info(f"Откуда: {from_value}")
+        if not self.colors_data.empty:
+            color_data = self.colors_data.loc[
+                self.colors_data["Lat"] == color_value
+            ]
+            if not color_data.empty:
+                color_value = color_data["Color"].values[0]
+
+        self.log_info(f"Маркировка: {mark_value}")
         self.log_info(f"Куда: {to_value}")
-        return from_value, to_value
+
+        self.log_info(f"Цвет: {color_value}")
+        self.log_info(f"Откуда: {from_value}")
+
+        line_1 = construct_line(mark_value, to_value)
+        line_2 = construct_line(color_value, from_value)
+
+        return line_1, line_2
 
     except Exception as e:
         self.log_error(f"Error test table: {str(e)}")
