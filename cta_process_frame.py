@@ -7,7 +7,11 @@ import cta_images
 IMAGE_MAX_SIZE = 150
 
 
-def update_process_frame(self: CableTesterApplication):
+def update_process_frame(
+    self: CableTesterApplication,
+    conn_value_1: str | None = None,
+    conn_value_2: str | None = None,
+):
 
     for w in self.process_frame.winfo_children():
         w.destroy()
@@ -25,7 +29,9 @@ def update_process_frame(self: CableTesterApplication):
         side="right", fill="both", expand=True, padx=5, pady=5
     )
 
-    cta_images.load_process_images(self, left_img_frame, right_img_frame)
+    cta_images.load_process_images(
+        self, left_img_frame, right_img_frame, conn_value_1, conn_value_2
+    )
 
     # Создаем фрейм для текстовой информации
     text_status_frame = ttk.Frame(self.process_frame)
