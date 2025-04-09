@@ -1,7 +1,10 @@
 import os
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 from app import CableTesterApplication, DATA_PATH
+
+DEFAULT_IMAGE_SIZE = (100, 100)
 
 
 def find_images(self: CableTesterApplication):
@@ -19,7 +22,7 @@ def find_images(self: CableTesterApplication):
             im_path = os.path.join(DATA_PATH, im_file.lower())
             image_paths.append(im_path)
             try:
-                self.loaded_images[i] = load_image(im_path)
+                self.loaded_images[i] = Image.open(im_path)
             except Exception as e:
                 self.log_error(f"Can't load image {im_file}: {str(e)}")
                 self.loaded_images[i] = None
@@ -27,11 +30,6 @@ def find_images(self: CableTesterApplication):
         self.log(f"Found {len(image_paths)} images")
 
     return image_paths
-
-
-def load_image(image_path) -> Image.Image:
-    img = Image.open(image_path)
-    return img
 
 
 def resize_image(img: Image.Image | None, width, height) -> Image.Image | None:
@@ -65,3 +63,42 @@ def prepare_images_for_canvas(
             self.image_references[i] = tk_img  # Обновляем ссылку
         else:
             self.image_references[i] = None
+
+
+def load_process_images(
+    self: CableTesterApplication,
+    left_img_frame,
+    right_img_frame,
+    left_im_path=None,
+    right_im_path=None,
+):
+    left_tk_img = load_process_image(self, left_img_frame, left_im_path)
+    right_tk_img = load_process_image(self, right_img_frame, right_im_path)
+    self.status_img_references = [left_tk_img, right_tk_img]
+
+
+def load_process_image(
+    self: CableTesterApplication,
+    img_frame,
+    im_path=None,
+):
+    # Загружаем изображения для статуса (используем заглушки, замените на свои изображения)
+    try:
+        if im_path:
+            _img = Image.open(os.path.join(DATA_PATH, im_path.lower()))
+        else:
+            _img = Image.new("RGB", DEFAULT_IMAGE_SIZE, color="white")
+
+        _tk_img = ImageTk.PhotoImage(_img)
+
+        # Отображаем изображения
+        img_label = ttk.Label(img_frame, image=_tk_img)
+        img_label.pack(padx=10, pady=10)
+        ttk.Label(img_frame, text=str(im_path)).pack()
+
+        return _tk_img
+
+    except Exception as e:
+        self.log(f"Error creating status images: {str(e)}")
+        ttk.Label(img_frame, text="Image not available").pack(padx=10, pady=10)
+        return None
