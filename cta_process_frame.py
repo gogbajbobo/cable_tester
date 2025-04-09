@@ -7,7 +7,10 @@ import cta_images
 IMAGE_MAX_SIZE = 150
 
 
-def setup_process_frame(self: CableTesterApplication):
+def update_process_frame(self: CableTesterApplication):
+
+    for w in self.process_frame.winfo_children():
+        w.destroy()
 
     # Создаем фрейм для двух изображений
     img_status_frame = ttk.Frame(self.process_frame)

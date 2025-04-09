@@ -53,7 +53,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         row=3, column=0, padx=5, pady=10, sticky="nsew", columnspan=2
     )
 
-    cta_process_frame.setup_process_frame(self)
+    cta_process_frame.update_process_frame(self)
 
 
 def update_data_view(self: CableTesterApplication):
