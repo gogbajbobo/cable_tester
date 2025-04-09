@@ -53,7 +53,7 @@ def stop_process(self: CableTesterApplication):
 
     # Wait for the thread to finish
     if self.thread:
-        self.thread.join(timeout=2.0)
+        self.thread.join(timeout=0.5)
 
     cta_ports.close_serial_connection(self)
 
