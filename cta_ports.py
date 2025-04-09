@@ -2,8 +2,7 @@ import serial
 import serial.tools.list_ports
 
 from app import CableTesterApplication, COM_STATE
-
-# import cta_middle_frame
+import cta_tables
 
 
 def update_ports_list(self: CableTesterApplication):
@@ -100,10 +99,15 @@ def process_data(self: CableTesterApplication, data: str):
         elif self.com_state == COM_STATE.LISTEN:
             # Look up the value in the table (simplified example)
             if value.startswith("P"):
-                _value = int(value.removeprefix("P"))
+                _value = value.removeprefix("P")
                 # look column откуда
-                send_data(self, f"test data 1 {_value}")
-                send_data(self, f"test data 2 {_value}")
+                result = cta_tables.find_value_in_table(self, _value)
+                if result:
+                    line_1, line_2 = result
+                    send_data(self, line_1)
+                    send_data(self, line_2)
+                else:
+                    self.log_warning("Nothing to send")
             else:
                 raise ValueError(f"Receive unexpected value: {value}")
 
