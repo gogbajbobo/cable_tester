@@ -111,12 +111,6 @@ def process_data(self: CableTesterApplication, data: str):
             else:
                 raise ValueError(f"Receive unexpected value: {value}")
 
-            # Update the middle frame with the data
-            # cta_middle_frame.update_data_view(self, value, response)
-
-            # Send response back through COM port
-            # send_data(self, response)
-
     except Exception as e:
         self.log(f"Error processing data: {str(e)}")
 
