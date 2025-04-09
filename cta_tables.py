@@ -42,7 +42,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
             row_data = [data for data in row.fillna("").values]
             self.data_tree.insert("", "end", values=row_data)
 
-        find_value_in_table(self, "1")
+        # find_value_in_table(self, "1")
 
     except Exception as e:
         self.log_error(f"Error loading table {selected_table}: {str(e)}")
