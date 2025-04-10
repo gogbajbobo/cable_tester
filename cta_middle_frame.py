@@ -54,26 +54,6 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
 
 def update_data_view(self: CableTesterApplication):
-    # self.log("update_data_view")
-    put_images_into_canvas(self)
-
-
-def update_canvas_with_images(self: CableTesterApplication):
-    # Вычисляем размер для каждого изображения
-    img_width = min(
-        IMAGE_MAX_SIZE,
-        (self.images_canvas.winfo_width() or 800)
-        // max(1, len(self.image_paths)),
-    )
-    create_images(
-        self,
-        self.images_canvas,
-        img_width,
-        IMAGE_MAX_SIZE,
-    )
-
-
-def put_images_into_canvas(self):
     self.image_paths = cta_images.find_images(self)
     self.images_canvas.delete("all")
 
@@ -92,6 +72,21 @@ def put_images_into_canvas(self):
             font=("Arial", 12),
             anchor=tk.W,
         )
+
+
+def update_canvas_with_images(self: CableTesterApplication):
+    # Вычисляем размер для каждого изображения
+    img_width = min(
+        IMAGE_MAX_SIZE,
+        (self.images_canvas.winfo_width() or 800)
+        // max(1, len(self.image_paths)),
+    )
+    create_images(
+        self,
+        self.images_canvas,
+        img_width,
+        IMAGE_MAX_SIZE,
+    )
 
 
 def create_images(
