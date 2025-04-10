@@ -35,7 +35,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
         # Set column headings
         for col in columns:
             self.data_tree.heading(col, text=col)
-            self.data_tree.column(col, width=150)
+            self.data_tree.column(col, width=64)
 
         for i in range(rows):
             row = self.table_data.iloc[i][:-2]
