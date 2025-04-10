@@ -18,8 +18,6 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.images_canvas = tk.Canvas(images_frame, height=IMAGE_MAX_SIZE)
     self.images_canvas.pack(fill="x", expand=True)
 
-    put_images_into_canvas(self)
-
     # Обработчик изменения размера
     def on_canvas_resize(event):
         if self.image_paths:
@@ -52,25 +50,12 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.process_frame.grid(
         row=3, column=0, padx=5, pady=10, sticky="nsew", columnspan=2
     )
-
     cta_process_frame.update_process_frame(self)
 
 
 def update_data_view(self: CableTesterApplication):
     # self.log("update_data_view")
     put_images_into_canvas(self)
-
-    """Update the middle frame with received and corresponding table data"""
-    # Add to the treeview
-    # self.data_tree.insert("", "end", values=(received, table_data))
-
-    # Auto-scroll to the bottom
-    self.data_tree.yview_moveto(1)
-
-    # Limit the number of items (optional)
-    items = self.data_tree.get_children()
-    if len(items) > 100:  # Keep only the last 100 entries
-        self.data_tree.delete(items[0])
 
 
 def update_canvas_with_images(self: CableTesterApplication):
@@ -97,8 +82,6 @@ def put_images_into_canvas(self):
         self.image_references = [None] * len(self.image_paths)
         update_canvas_with_images(self)
 
-        # Обновляем размер canvas, чтобы вместить все изображения
-        self.images_canvas.config(scrollregion=self.images_canvas.bbox("all"))
     else:
         # Если изображений нет, показываем сообщение
         self.images_canvas.create_text(
@@ -125,7 +108,6 @@ def create_images(
             images_canvas.create_image(x_pos, 0, image=tk_img, anchor="nw")
         else:
             self.images_canvas.create_text(
-                # 0,
                 x_pos + img_width // 2,
                 img_height // 2,
                 text="No image found",
