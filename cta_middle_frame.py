@@ -57,7 +57,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
 
 def update_data_view(self: CableTesterApplication):
-    self.log("update_data_view")
+    # self.log("update_data_view")
     put_images_into_canvas(self)
 
     """Update the middle frame with received and corresponding table data"""

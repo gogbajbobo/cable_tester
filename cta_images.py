@@ -25,7 +25,7 @@ def find_images(self: CableTesterApplication):
     if "Изображение" in self.table_data.columns:
 
         images = self.table_data["Изображение"].dropna().to_list()
-        self.log(f"self.table_data['Изображение']\n{images}")
+        # self.log(f"self.table_data['Изображение']\n{images}")
 
         self.loaded_images = [None] * len(images)
 

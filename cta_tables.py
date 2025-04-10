@@ -64,7 +64,7 @@ def update_tables_list(self: CableTesterApplication):
                 self.colors_data = pd.read_csv(
                     os.path.join(DATA_PATH, file), sep=";", dtype=str
                 )
-                self.log(f"Load colors data:\n{self.colors_data}")
+                # self.log(f"Load colors data:\n{self.colors_data}")
             elif (
                 file.endswith(".csv")
                 or file.endswith(".xlsx")
