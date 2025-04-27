@@ -40,7 +40,7 @@ class CableTesterApplication:
 
         self.selected_table = tk.StringVar()
         self.selected_port = tk.StringVar()
-        self.contact_count = tk.IntVar(value=8)
+        self.contact_count = tk.IntVar(value=32)
         self.running = False
         self.com_state: COM_STATE = COM_STATE.NONE
         self.tables_list = []
