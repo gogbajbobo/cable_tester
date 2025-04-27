@@ -1,5 +1,6 @@
+import os
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 
 from app import CableTesterApplication
 import cta_tables
@@ -18,7 +19,25 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     )
     _start_process = lambda: cta_process.start_process(self)
     _stop_process = lambda: cta_process.stop_process(self)
-    _browse_directory = lambda: print("browse_directory")
+
+    def browse_directory(self: CableTesterApplication):
+        """Открывает диалог выбора директории"""
+
+        # Получаем текущую директорию
+        current_dir = self.data_directory.get()
+
+        # Открываем диалог выбора директории
+        directory = filedialog.askdirectory(
+            initialdir=current_dir, title="Select Directory for Tables"
+        )
+
+        # Если директория выбрана, обновляем переменную и список таблиц
+        if directory:
+            self.data_directory.set(directory)
+            self.log(f"Changed data directory to: {directory}")
+            _update_tables_list()
+
+    _browse_directory = lambda: browse_directory(self)
 
     frame.columnconfigure(0, weight=1)
     frame.columnconfigure(1, weight=1)
