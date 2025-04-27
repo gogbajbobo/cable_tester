@@ -167,7 +167,7 @@ def find_value_in_table(
         )
 
         line_1 = construct_line(mark_value, to_value)
-        line_2 = construct_line(color_value, from_value)
+        line_2 = construct_line(color_value, "")
 
         return line_1, line_2
 
