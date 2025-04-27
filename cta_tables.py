@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from app import CableTesterApplication, DATA_PATH
+from app import CableTesterApplication
 import cta_images
 import cta_middle_frame
 import cta_process_frame
@@ -58,11 +58,13 @@ def update_tables_list(self: CableTesterApplication):
     # Example implementation - looking for CSV and Excel files in current directory
     self.tables_list = []
 
-    if os.path.isdir(DATA_PATH):
-        for file in os.listdir(DATA_PATH):
+    if os.path.isdir(self.data_directory.get()):
+        for file in os.listdir(self.data_directory.get()):
             if file.startswith("colors") and file.endswith(".csv"):
                 self.colors_data = pd.read_csv(
-                    os.path.join(DATA_PATH, file), sep=";", dtype=str
+                    os.path.join(self.data_directory.get(), file),
+                    sep=";",
+                    dtype=str,
                 )
                 # self.log(f"Load colors data:\n{self.colors_data}")
             elif (
@@ -72,7 +74,7 @@ def update_tables_list(self: CableTesterApplication):
             ):
                 self.tables_list.append(file)
     else:
-        self.log_error(f"Have no data dir {DATA_PATH}")
+        self.log_error(f"Have no data dir {self.data_directory.get()}")
 
     self.tables_combobox["values"] = self.tables_list
 
@@ -86,7 +88,7 @@ def update_tables_list(self: CableTesterApplication):
 
 def load_selected_table(self: CableTesterApplication):
     # Load the selected table
-    st = os.path.join(DATA_PATH, self.selected_table.get())
+    st = os.path.join(self.data_directory.get(), self.selected_table.get())
     try:
         if st.endswith(".csv"):
             self.table_data = pd.read_csv(st, sep=";", dtype=str)
