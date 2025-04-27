@@ -203,7 +203,8 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 def set_controls_state(self: CableTesterApplication, state: str):
     for child in self.left_frame.winfo_children():
         if child.winfo_name() != STOP_BUTTON:
-            child["state"] = state
+            if "state" in child.keys():
+                child["state"] = state
 
 
 def disable_controls(self: CableTesterApplication):
