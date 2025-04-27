@@ -133,6 +133,7 @@ def find_value_in_table(
         ]
         if result.empty:
             self.log_warning(f"Value {value} not found in table.")
+            cta_process_frame.update_process_frame(self)
             return
 
         result = result.fillna("")
