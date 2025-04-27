@@ -11,7 +11,7 @@ from enum import Enum
 
 import cta_layout
 
-DATA_PATH = os.path.join(os.path.curdir, "data")
+DATA_PATH = os.path.join(os.getcwd(), "data")
 
 
 class COM_STATE(str, Enum):
@@ -35,9 +35,9 @@ class CableTesterApplication:
         self.root.geometry("1280x1024")
 
         # Variables
-        self.tables_directory = tk.StringVar(
-            value=os.getcwd()
-        )  # По умолчанию текущая директория
+        self.data_directory = tk.StringVar(value=DATA_PATH)
+        self.data_directory.trace_add("write", self.align_dir_entry)
+
         self.selected_table = tk.StringVar()
         self.selected_port = tk.StringVar()
         self.contact_count = tk.IntVar(value=8)
