@@ -20,6 +20,9 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     _stop_process = lambda: cta_process.stop_process(self)
     _browse_directory = lambda: print("browse_directory")
 
+    frame.columnconfigure(0, weight=1)
+    frame.columnconfigure(1, weight=1)
+
     # Tables section
 
     tables_row_start = 0
