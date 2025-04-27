@@ -6,6 +6,7 @@ from app import CableTesterApplication
 import cta_tables
 import cta_ports
 import cta_process
+import cta_config
 
 START_BUTTON = "start_button"
 STOP_BUTTON = "stop_button"
@@ -36,6 +37,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         if directory:
             self.data_directory.set(directory)
             self.log(f"Changed data directory to: {directory}")
+            cta_config.set_value("data_directory", directory)
             _update_tables_list()
 
     _browse_directory = lambda: browse_directory(self)
