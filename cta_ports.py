@@ -4,6 +4,7 @@ import serial.tools.list_ports
 from app import CableTesterApplication, COM_STATE
 import cta_tables
 import cta_process
+import cta_left_frame
 
 
 def update_ports_list(self: CableTesterApplication):
@@ -17,7 +18,10 @@ def update_ports_list(self: CableTesterApplication):
         self.ports_combobox.current(0)
         self.log_info(f"Found {len(ports)} COM ports")
     else:
+        self.selected_port.set("")
         self.log_error("No COM ports found")
+
+    cta_left_frame.check_start_state(self)
 
 
 def open_serial_connection(self: CableTesterApplication):
