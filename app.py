@@ -35,6 +35,9 @@ class CableTesterApplication:
         self.root.geometry("1280x1024")
 
         # Variables
+        self.tables_directory = tk.StringVar(
+            value=os.getcwd()
+        )  # По умолчанию текущая директория
         self.selected_table = tk.StringVar()
         self.selected_port = tk.StringVar()
         self.contact_count = tk.IntVar(value=8)

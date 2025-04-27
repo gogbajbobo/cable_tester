@@ -18,46 +18,149 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     )
     _start_process = lambda: cta_process.start_process(self)
     _stop_process = lambda: cta_process.stop_process(self)
+    _browse_directory = lambda: print("browse_directory")
 
     # Tables section
+
+    tables_row_start = 0
     ttk.Label(frame, text="Tables:").grid(
-        row=0, column=0, padx=5, pady=5, sticky="w"
+        row=tables_row_start + 0, column=0, padx=5, pady=5, sticky="w"
     )
+
+    # Entry для отображения пути к директории
+    dir_entry = ttk.Entry(
+        frame, textvariable=self.tables_directory, state="readonly"
+    )
+    dir_entry.grid(
+        row=tables_row_start + 1, column=0, padx=5, pady=5, sticky="w"
+    )
+
+    # Кнопка выбора директории
+    ttk.Button(frame, text="Browse...", command=_browse_directory).grid(
+        row=tables_row_start + 1, column=1, padx=5, pady=5, sticky="w"
+    )
+
     ttk.Button(
         frame, text="Update Tables List", command=_update_tables_list
-    ).grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+    ).grid(
+        row=tables_row_start + 2,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
     self.tables_combobox = ttk.Combobox(
         frame, textvariable=self.selected_table
     )
-    self.tables_combobox.grid(row=2, column=0, padx=5, pady=5, sticky="ew")
+    self.tables_combobox.grid(
+        row=tables_row_start + 3,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
     # Привязываем обработчик события выбора
     self.tables_combobox.bind("<<ComboboxSelected>>", _on_table_selected)
 
+    ttk.Separator(frame, orient="horizontal").grid(
+        row=tables_row_start + 4,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
+
     # COM Ports section
+
+    comport_row_start = tables_row_start + 5
+
     ttk.Label(frame, text="COM Ports:").grid(
-        row=3, column=0, padx=5, pady=5, sticky="w"
+        row=comport_row_start + 0, column=0, padx=5, pady=5, sticky="w"
     )
     ttk.Button(
         frame, text="Update COM Ports List", command=_update_ports_list
-    ).grid(row=4, column=0, padx=5, pady=5, sticky="ew")
+    ).grid(
+        row=comport_row_start + 1,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
     self.ports_combobox = ttk.Combobox(frame, textvariable=self.selected_port)
-    self.ports_combobox.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
+    self.ports_combobox.grid(
+        row=comport_row_start + 2,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
+
+    ttk.Separator(frame, orient="horizontal").grid(
+        row=comport_row_start + 3,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
 
     # Contact count
+
+    contacts_row_start = comport_row_start + 4
+
     ttk.Label(frame, text="Number of Contacts:").grid(
-        row=6, column=0, padx=5, pady=5, sticky="w"
+        row=contacts_row_start + 0,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="w",
     )
     ttk.Entry(frame, textvariable=self.contact_count).grid(
-        row=7, column=0, padx=5, pady=5, sticky="ew"
+        row=contacts_row_start + 1,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
+
+    ttk.Separator(frame, orient="horizontal").grid(
+        row=contacts_row_start + 2,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
     )
 
     # Control buttons
+
+    controls_row_start = contacts_row_start + 3
+
     ttk.Button(frame, text="Start Process", command=_start_process).grid(
-        row=8, column=0, padx=5, pady=5, sticky="ew"
+        row=controls_row_start + 0,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
     )
     ttk.Button(
         frame, text="Stop Process", command=_stop_process, name=STOP_BUTTON
-    ).grid(row=9, column=0, padx=5, pady=5, sticky="ew")
+    ).grid(
+        row=controls_row_start + 1,
+        column=0,
+        columnspan=2,
+        padx=5,
+        pady=5,
+        sticky="ew",
+    )
 
     # Update initial ports and tables lists
     self.root.after(0, _update_tables_list)
