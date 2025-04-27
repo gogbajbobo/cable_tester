@@ -7,6 +7,7 @@ import cta_tables
 import cta_ports
 import cta_process
 
+START_BUTTON = "start_button"
 STOP_BUTTON = "stop_button"
 
 
@@ -171,7 +172,9 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     controls_row_start = contacts_row_start + 3
 
-    ttk.Button(frame, text="Start Process", command=_start_process).grid(
+    ttk.Button(
+        frame, text="Start Process", command=_start_process, name=START_BUTTON
+    ).grid(
         row=controls_row_start + 0,
         column=0,
         columnspan=2,
@@ -207,3 +210,13 @@ def disable_controls(self: CableTesterApplication):
 
 def enable_controls(self: CableTesterApplication):
     set_controls_state(self, tk.NORMAL)
+
+
+def check_start_state(self: CableTesterApplication):
+
+    disabled = not bool(self.selected_table.get()) or not bool(
+        self.selected_port.get()
+    )
+    for child in self.left_frame.winfo_children():
+        if child.winfo_name() == START_BUTTON:
+            child["state"] = tk.DISABLED if disabled else tk.NORMAL

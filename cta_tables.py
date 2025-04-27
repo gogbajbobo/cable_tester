@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 from app import CableTesterApplication
-import cta_images
+import cta_left_frame
 import cta_middle_frame
 import cta_process_frame
 
@@ -14,6 +14,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
     self.log(f"selected_table: {selected_table}")
 
     if not selected_table:
+        cta_left_frame.check_start_state(self)
         self.log("No table selected")
         # Очищаем текущие данные в Treeview
         for item in self.data_tree.get_children():
@@ -21,6 +22,7 @@ def on_table_selected(self: CableTesterApplication, event=None):
         cta_middle_frame.update_data_view(self)
         return
 
+    cta_left_frame.check_start_state(self)
     self.log(f"Table selected: {selected_table}")
 
     try:
