@@ -133,6 +133,8 @@ def find_value_in_table(
         ]
         if result.empty:
             self.log_warning(f"Value {value} not found in table.")
+            for item in self.data_tree.selection():
+                self.data_tree.selection_remove(item)
             cta_process_frame.update_process_frame(self)
             return
 
