@@ -3,6 +3,7 @@ import serial.tools.list_ports
 
 from app import CableTesterApplication, COM_STATE
 import cta_tables
+import cta_process
 
 
 def update_ports_list(self: CableTesterApplication):
@@ -92,6 +93,9 @@ def process_data(self: CableTesterApplication, data: str):
                         "Confirm contact count differ from the origin"
                     )
             elif value.startswith("T"):
+                _value = value.removeprefix("T")
+                self.log_warning("Maximum number of contact: {_value}")
+                cta_process.stop_process(self)
                 raise ValueError("Set to many contact count")
             else:
                 raise ValueError(f"Receive unexpected value: {value}")
@@ -112,7 +116,7 @@ def process_data(self: CableTesterApplication, data: str):
                 raise ValueError(f"Receive unexpected value: {value}")
 
     except Exception as e:
-        self.log(f"Error processing data: {str(e)}")
+        self.log_error(f"Error processing data: {str(e)}")
 
 
 def send_data(self: CableTesterApplication, data):
