@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import serial
-import serial.tools.list_ports
 import threading
 import os
 import pandas as pd
@@ -9,9 +8,8 @@ from datetime import datetime
 from PIL import ImageTk, Image
 from enum import Enum
 
+import cta_config
 import cta_layout
-
-DATA_PATH = os.path.join(os.getcwd(), "data")
 
 
 class COM_STATE(str, Enum):
@@ -35,7 +33,9 @@ class CableTesterApplication:
         self.root.geometry("1280x1024")
 
         # Variables
-        self.data_directory = tk.StringVar(value=DATA_PATH)
+        self.data_directory = tk.StringVar(
+            value=cta_config.get_value("data_directory")
+        )
         self.data_directory.trace_add("write", self.align_dir_entry)
 
         self.selected_table = tk.StringVar()
