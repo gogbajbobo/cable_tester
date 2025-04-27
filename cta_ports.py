@@ -116,6 +116,8 @@ def process_data(self: CableTesterApplication, data: str):
                     send_data(self, line_2)
                 else:
                     self.log_warning("Nothing to send")
+                    send_data(self, "")
+                    send_data(self, "")
             else:
                 raise ValueError(f"Receive unexpected value: {value}")
 
