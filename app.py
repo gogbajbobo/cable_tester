@@ -54,6 +54,7 @@ class CableTesterApplication:
         self.ports_combobox = ttk.Combobox()
         self.data_tree = ttk.Treeview()
         self.logs_text = tk.Text()
+        self.dir_entry = ttk.Entry()
         self.table_data = pd.DataFrame()
         self.colors_data = pd.DataFrame()
         self.serial_connection = serial.Serial()
@@ -73,9 +74,13 @@ class CableTesterApplication:
 
         # Create the main layout
         cta_layout.create_layout(self)
+        self.align_dir_entry()
 
         # Initialize logs
         self.log_info("Application started")
+
+    def align_dir_entry(self, *args):
+        self.dir_entry.xview_moveto(1)
 
     def log(self, message, tag=LOG_TAG_CONFIG.NONE):
         """Add a message to the application log"""

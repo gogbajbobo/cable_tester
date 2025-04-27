@@ -28,10 +28,12 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     )
 
     # Entry для отображения пути к директории
-    dir_entry = ttk.Entry(
-        frame, textvariable=self.tables_directory, state="readonly"
+    self.dir_entry = ttk.Entry(
+        frame,
+        textvariable=self.data_directory,
+        state="readonly",
     )
-    dir_entry.grid(
+    self.dir_entry.grid(
         row=tables_row_start + 1, column=0, padx=5, pady=5, sticky="w"
     )
 
