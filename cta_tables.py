@@ -112,6 +112,8 @@ def load_selected_table(self: CableTesterApplication):
         cta_middle_frame.update_data_view(self)
     except Exception as e:
         self.log_error(f"Error loading table: {str(e)}")
+        self.table_data = pd.DataFrame()
+        cta_middle_frame.update_data_view(self)
         return
 
 
