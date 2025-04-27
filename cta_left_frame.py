@@ -1,4 +1,3 @@
-import os
 import tkinter as tk
 from tkinter import ttk, filedialog
 
@@ -42,8 +41,8 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     _browse_directory = lambda: browse_directory(self)
 
-    frame.columnconfigure(0, weight=1)
-    frame.columnconfigure(1, weight=1)
+    # frame.columnconfigure(0, weight=3)
+    # frame.columnconfigure(1, weight=1)
 
     # Tables section
 
@@ -59,7 +58,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         state="readonly",
     )
     self.dir_entry.grid(
-        row=tables_row_start + 1, column=0, padx=5, pady=5, sticky="w"
+        row=tables_row_start + 1, column=0, padx=5, pady=5, sticky="ew"
     )
 
     # Кнопка выбора директории
