@@ -144,17 +144,17 @@ def find_value_in_table(
             child_id = rows[idx]
             self.data_tree.selection_set(child_id)
 
-        mark_value = result["Маркировка"].values[0]
-        from_value = result["Откуда"].values[0]
-        to_value = result["Куда"].values[0]
-        color_value = result["Цвет"].values[0]
+        mark_value = result["Маркировка"].values[0].strip()
+        from_value = result["Откуда"].values[0].strip()
+        to_value = result["Куда"].values[0].strip()
+        color_value = result["Цвет"].values[0].strip()
 
         if not self.colors_data.empty:
             color_data = self.colors_data.loc[
                 self.colors_data["Lat"] == color_value
             ]
             if not color_data.empty:
-                color_value = color_data["Color"].values[0]
+                color_value = color_data["Color"].values[0].strip()
 
         self.log_info(f"Маркировка: {mark_value}")
         self.log_info(f"Куда: {to_value}")
