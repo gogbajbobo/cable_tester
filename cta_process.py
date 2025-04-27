@@ -51,9 +51,10 @@ def stop_process(self: CableTesterApplication):
     self.com_state = COM_STATE.NONE
     cta_left_frame.enable_controls(self)
 
-    # Wait for the thread to finish
-    if self.thread:
-        self.thread.join(timeout=0.5)
+    # # Wait for the thread to finish
+    # print(f"self.thread {self.thread}")
+    # if self.thread:
+    #     self.thread.join(timeout=0.5)
 
     cta_ports.close_serial_connection(self)
 
