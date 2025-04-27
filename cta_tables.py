@@ -11,8 +11,14 @@ def on_table_selected(self: CableTesterApplication, event=None):
     """Обрабатывает выбор таблицы из выпадающего списка"""
     selected_table = self.selected_table.get()
 
+    self.log(f"selected_table: {selected_table}")
+
     if not selected_table:
         self.log("No table selected")
+        # Очищаем текущие данные в Treeview
+        for item in self.data_tree.get_children():
+            self.data_tree.delete(item)
+        cta_middle_frame.update_data_view(self)
         return
 
     self.log(f"Table selected: {selected_table}")
@@ -83,6 +89,9 @@ def update_tables_list(self: CableTesterApplication):
         self.log(f"Found {len(self.tables_list)} tables")
         self.root.after(0, lambda: on_table_selected(self))
     else:
+        self.table_data = pd.DataFrame()
+        self.selected_table.set("")
+        on_table_selected(self)
         self.log("No tables found")
 
 
