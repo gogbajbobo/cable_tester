@@ -94,7 +94,7 @@ def process_data(self: CableTesterApplication, data: str):
                     )
             elif value.startswith("T"):
                 _value = value.removeprefix("T")
-                self.log_warning("Maximum number of contact: {_value}")
+                self.log_warning(f"Maximum number of contact: {_value}")
                 cta_process.stop_process(self)
                 raise ValueError("Set to many contact count")
             else:
