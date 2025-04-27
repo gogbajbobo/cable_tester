@@ -36,9 +36,13 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     )
 
     # Кнопка выбора директории
-    ttk.Button(frame, text="Browse...", command=_browse_directory).grid(
-        row=tables_row_start + 1, column=1, padx=5, pady=5, sticky="w"
-    )
+
+    ttk.Button(
+        frame,
+        text="...",
+        command=_browse_directory,
+        width=3,
+    ).grid(row=tables_row_start + 1, column=1, padx=5, pady=5, sticky="ewsn")
 
     ttk.Button(
         frame, text="Update Tables List", command=_update_tables_list
