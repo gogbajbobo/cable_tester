@@ -29,7 +29,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.images_canvas.bind("<Configure>", on_canvas_resize)
 
     # Data view section with header
-    ttk.Label(frame, text="Table Data:").grid(
+    ttk.Label(frame, text="Таблица контактов:").grid(
         row=1, column=0, padx=5, pady=5, sticky="w"
     )
 
@@ -46,7 +46,7 @@ def setup_middle_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     self.data_tree.configure(yscrollcommand=scrollbar.set)
 
     # Создаем фрейм для нижней части
-    self.process_frame = ttk.LabelFrame(frame, text="Process Information")
+    self.process_frame = ttk.LabelFrame(frame, text="Данные о контакте")
     self.process_frame.grid(
         row=3, column=0, padx=5, pady=10, sticky="nsew", columnspan=2
     )
@@ -67,7 +67,7 @@ def update_data_view(self: CableTesterApplication):
         self.images_canvas.create_text(
             10,
             75,
-            text="No images found",
+            text="Изображения не найдены",
             fill="gray",
             font=("Arial", 12),
             anchor=tk.W,
@@ -105,7 +105,7 @@ def create_images(
             self.images_canvas.create_text(
                 x_pos + img_width // 2,
                 img_height // 2,
-                text="No image found",
+                text="Изображение не найдено",
                 fill="gray",
                 font=("Arial", 12),
                 anchor=tk.S,

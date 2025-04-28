@@ -35,7 +35,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         # Если директория выбрана, обновляем переменную и список таблиц
         if directory:
             self.data_directory.set(directory)
-            self.log(f"Changed data directory to: {directory}")
+            self.log(f"Смена папки с данными: {directory}")
             cta_config.set_value("data_directory", directory)
             _update_tables_list()
 
@@ -47,7 +47,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     # Tables section
 
     tables_row_start = 0
-    ttk.Label(frame, text="Tables:").grid(
+    ttk.Label(frame, text="Таблицы:").grid(
         row=tables_row_start + 0, column=0, padx=5, pady=5, sticky="w"
     )
 
@@ -71,7 +71,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     ).grid(row=tables_row_start + 1, column=1, padx=5, pady=5, sticky="ewsn")
 
     ttk.Button(
-        frame, text="Update Tables List", command=_update_tables_list
+        frame, text="Обновить список таблиц", command=_update_tables_list
     ).grid(
         row=tables_row_start + 2,
         column=0,
@@ -107,11 +107,11 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     comport_row_start = tables_row_start + 5
 
-    ttk.Label(frame, text="COM Ports:").grid(
+    ttk.Label(frame, text="COM-порты:").grid(
         row=comport_row_start + 0, column=0, padx=5, pady=5, sticky="w"
     )
     ttk.Button(
-        frame, text="Update COM Ports List", command=_update_ports_list
+        frame, text="Обновить список COM-портов", command=_update_ports_list
     ).grid(
         row=comport_row_start + 1,
         column=0,
@@ -143,7 +143,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     contacts_row_start = comport_row_start + 4
 
-    ttk.Label(frame, text="Number of Contacts:").grid(
+    ttk.Label(frame, text="Число контактов:").grid(
         row=contacts_row_start + 0,
         column=0,
         columnspan=2,
@@ -174,7 +174,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
     controls_row_start = contacts_row_start + 3
 
     ttk.Button(
-        frame, text="Start Process", command=_start_process, name=START_BUTTON
+        frame, text="Начать работу", command=_start_process, name=START_BUTTON
     ).grid(
         row=controls_row_start + 0,
         column=0,
@@ -184,7 +184,7 @@ def setup_left_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
         sticky="ew",
     )
     ttk.Button(
-        frame, text="Stop Process", command=_stop_process, name=STOP_BUTTON
+        frame, text="Завершить работу", command=_stop_process, name=STOP_BUTTON
     ).grid(
         row=controls_row_start + 1,
         column=0,

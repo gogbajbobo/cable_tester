@@ -35,10 +35,12 @@ def find_images(self: CableTesterApplication):
             try:
                 self.loaded_images[i] = Image.open(im_path)
             except Exception as e:
-                self.log_error(f"Can't load image {im_file}: {str(e)}")
+                self.log_error(
+                    f"Не могу загрузить изображение {im_file}: {str(e)}"
+                )
                 self.loaded_images[i] = None
 
-        self.log(f"Found {len(image_paths)} images")
+        self.log(f"Найдено изображений: {len(image_paths)}")
 
     return image_paths
 
@@ -110,7 +112,9 @@ def load_process_image(
                 )
                 _img = resize_image(_img, *DEFAULT_IMAGE_SIZE)
             except Exception as e:
-                self.log_error(f"Can't load image {conn_im_path}: {str(e)}")
+                self.log_error(
+                    f"Не могу загрузить изображение {conn_im_path}: {str(e)}"
+                )
 
     _tk_img = ImageTk.PhotoImage(_img)
 

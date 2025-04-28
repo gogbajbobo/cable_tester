@@ -11,7 +11,7 @@ def setup_right_frame(self: CableTesterApplication, frame: ttk.LabelFrame):
 
     # Application logs tab
     logs_frame = ttk.Frame(notebook)
-    notebook.add(logs_frame, text="Application Logs")
+    notebook.add(logs_frame, text="Журнал работы")
 
     self.logs_text = tk.Text(logs_frame, wrap="word")
     self.logs_text.pack(fill="both", expand=True)
