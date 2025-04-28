@@ -10,20 +10,20 @@ import cta_ports
 def start_process(self: CableTesterApplication):
     """Start the main process loop"""
     if self.running:
-        self.log_warning("Process is already running")
+        self.log_warning("Процесс уже запущен")
         return
 
     if not self.selected_port.get():
-        self.log_error("Error: No COM port selected")
+        self.log_error("Ошибка: не выбран COM-порт")
         return
 
     if not self.selected_table.get():
-        self.log_error("Error: No table selected")
+        self.log_error("Ошибка: не выбрана таблица")
         return
 
     try:
         self.log(
-            f"Starting process with port {self.selected_port.get()} and table {self.selected_table.get()}"
+            f"Запускаю процесс с COM-портом {self.selected_port.get()} и таблицей {self.selected_table.get()}"
         )
 
         cta_ports.open_serial_connection(self)
@@ -37,35 +37,36 @@ def start_process(self: CableTesterApplication):
         self.thread.start()
 
     except Exception as e:
-        self.log(f"Error starting process: {str(e)}")
+        self.log(f"Ошибка запуска процесса: {str(e)}")
 
 
 def stop_process(self: CableTesterApplication):
     """Stop the main process loop"""
     if not self.running:
-        self.log_warning("Process is not running")
+        self.log_warning("Процесс не запущен")
         return
 
-    self.log("Stopping process")
+    self.log("Отанавливаю процесс")
     self.running = False
     self.com_state = COM_STATE.NONE
     cta_left_frame.enable_controls(self)
 
-    # Wait for the thread to finish
-    if self.thread:
-        self.thread.join(timeout=0.5)
+    # # Wait for the thread to finish
+    # print(f"self.thread {self.thread}")
+    # if self.thread:
+    #     self.thread.join(timeout=0.5)
 
     cta_ports.close_serial_connection(self)
 
 
 def process_loop(self: CableTesterApplication):
     """Main processing loop - runs in a separate thread"""
-    self.log("Process loop started")
+    self.log("Начинаю цикл процесса")
 
     while self.running:
         try:
             if not self.serial_connection:
-                raise ValueError("self.serial_connection is None")
+                raise ValueError("Не установлено соединение с COM-портом")
 
             cta_ports.read_data(self)
 
@@ -73,7 +74,7 @@ def process_loop(self: CableTesterApplication):
             time.sleep(0.01)
 
         except Exception as e:
-            self.log(f"Error in process loop: {str(e)}")
+            self.log(f"Ошибка в цикле процесса: {str(e)}")
             stop_process(self)
 
-    self.log("Process loop ended")
+    self.log("Завершён цикл процесса")

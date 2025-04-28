@@ -14,13 +14,13 @@ def create_layout(self: CableTesterApplication):
     main_paned.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
     # Create frames for the three sections
-    self.left_frame = ttk.LabelFrame(main_paned, text="Control Panel")
+    self.left_frame = ttk.LabelFrame(main_paned, text="Панель управления")
 
     # Вложенный PanedWindow для средней и правой частей
     right_paned = tk.PanedWindow(main_paned, orient=tk.HORIZONTAL)
 
-    middle_frame = ttk.LabelFrame(right_paned, text="Connectors")
-    right_frame = ttk.LabelFrame(right_paned, text="Information")
+    middle_frame = ttk.LabelFrame(right_paned, text="Разъёмы")
+    right_frame = ttk.LabelFrame(right_paned, text="Информация")
 
     # Добавляем фреймы в соответствующие PanedWindow
     main_paned.add(self.left_frame)

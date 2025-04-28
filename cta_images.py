@@ -2,7 +2,7 @@ import os
 from tkinter import ttk
 from PIL import Image, ImageTk
 
-from app import CableTesterApplication, DATA_PATH
+from app import CableTesterApplication
 
 DEFAULT_IMAGE_SIZE = (256, 256)
 
@@ -19,7 +19,7 @@ def find_image_for_connector(
 
 
 def find_images(self: CableTesterApplication):
-    """Ищет изображения в директории %DATA_PATH%"""
+    """Ищет изображения в директории self.data_directory"""
     image_paths = []
 
     if "Изображение" in self.table_data.columns:
@@ -30,15 +30,17 @@ def find_images(self: CableTesterApplication):
         self.loaded_images = [None] * len(images)
 
         for i, im_file in enumerate(images):
-            im_path = os.path.join(DATA_PATH, im_file.lower())
+            im_path = os.path.join(self.data_directory.get(), im_file.lower())
             image_paths.append(im_path)
             try:
                 self.loaded_images[i] = Image.open(im_path)
             except Exception as e:
-                self.log_error(f"Can't load image {im_file}: {str(e)}")
+                self.log_error(
+                    f"Не могу загрузить изображение {im_file}: {str(e)}"
+                )
                 self.loaded_images[i] = None
 
-        self.log(f"Found {len(image_paths)} images")
+        self.log(f"Найдено изображений: {len(image_paths)}")
 
     return image_paths
 
@@ -104,11 +106,15 @@ def load_process_image(
         if conn_im_path:
             try:
                 _img = Image.open(
-                    os.path.join(DATA_PATH, conn_im_path.lower())
+                    os.path.join(
+                        self.data_directory.get(), conn_im_path.lower()
+                    )
                 )
                 _img = resize_image(_img, *DEFAULT_IMAGE_SIZE)
             except Exception as e:
-                self.log_error(f"Can't load image {conn_im_path}: {str(e)}")
+                self.log_error(
+                    f"Не могу загрузить изображение {conn_im_path}: {str(e)}"
+                )
 
     _tk_img = ImageTk.PhotoImage(_img)
 

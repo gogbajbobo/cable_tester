@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import serial
-import serial.tools.list_ports
 import threading
 import os
 import pandas as pd
@@ -9,9 +8,8 @@ from datetime import datetime
 from PIL import ImageTk, Image
 from enum import Enum
 
+import cta_config
 import cta_layout
-
-DATA_PATH = os.path.join(os.path.curdir, "data")
 
 
 class COM_STATE(str, Enum):
@@ -31,13 +29,18 @@ class LOG_TAG_CONFIG(str, Enum):
 class CableTesterApplication:
     def __init__(self, root: tk.Tk):
         self.root = root
-        self.root.title("Cable tester")
+        self.root.title("Тестер жгутов")
         self.root.geometry("1280x1024")
 
         # Variables
+        self.data_directory = tk.StringVar(
+            value=cta_config.get_value("data_directory")
+        )
+        self.data_directory.trace_add("write", self.align_dir_entry)
+
         self.selected_table = tk.StringVar()
         self.selected_port = tk.StringVar()
-        self.contact_count = tk.IntVar(value=8)
+        self.contact_count = tk.IntVar(value=32)
         self.running = False
         self.com_state: COM_STATE = COM_STATE.NONE
         self.tables_list = []
@@ -51,6 +54,7 @@ class CableTesterApplication:
         self.ports_combobox = ttk.Combobox()
         self.data_tree = ttk.Treeview()
         self.logs_text = tk.Text()
+        self.dir_entry = ttk.Entry()
         self.table_data = pd.DataFrame()
         self.colors_data = pd.DataFrame()
         self.serial_connection = serial.Serial()
@@ -70,9 +74,13 @@ class CableTesterApplication:
 
         # Create the main layout
         cta_layout.create_layout(self)
+        self.align_dir_entry()
 
         # Initialize logs
-        self.log_info("Application started")
+        self.log_info("Приложение запущено")
+
+    def align_dir_entry(self, *args):
+        self.dir_entry.xview_moveto(1)
 
     def log(self, message, tag=LOG_TAG_CONFIG.NONE):
         """Add a message to the application log"""
