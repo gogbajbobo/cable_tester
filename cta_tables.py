@@ -155,7 +155,7 @@ def find_value_in_table(
         to_value = result["Куда"].values[0].strip()
         color_value = result["Цвет"].values[0].strip()
 
-        if not self.colors_data.empty:
+        if (not self.colors_data.empty) and len(color_value):
             color_data = self.colors_data.loc[
                 self.colors_data["Lat"].str.contains(color_value)
             ]
