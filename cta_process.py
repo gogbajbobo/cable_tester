@@ -3,7 +3,7 @@ import time
 
 from app import CableTesterApplication, COM_STATE
 import cta_left_frame
-
+import cta_process_frame
 import cta_ports
 
 
@@ -50,6 +50,7 @@ def stop_process(self: CableTesterApplication):
     self.running = False
     self.com_state = COM_STATE.NONE
     cta_left_frame.enable_controls(self)
+    cta_process_frame.update_process_frame(self)
 
     # # Wait for the thread to finish
     # print(f"self.thread {self.thread}")
