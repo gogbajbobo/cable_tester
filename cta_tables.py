@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import chardet
 
 from app import CableTesterApplication
 import cta_left_frame
@@ -103,7 +104,13 @@ def load_selected_table(self: CableTesterApplication):
     st = os.path.join(self.data_directory.get(), self.selected_table.get())
     try:
         if st.endswith(".csv"):
-            self.table_data = pd.read_csv(st, sep=";", dtype=str)
+            with open(st, "rb") as f:
+                result = chardet.detect(f.read())
+            enconding = result.get("encoding")
+            self.log_info(f"Автоопределение кодировки файла: {enconding}")
+            self.table_data = pd.read_csv(
+                st, sep=";", dtype=str, encoding=enconding
+            )
         elif st.endswith(".xlsx") or st.endswith(".xls"):
             self.table_data = pd.read_excel(st, dtype=str)
         else:
