@@ -28,6 +28,7 @@ class LOG_TAG_CONFIG(str, Enum):
 
 class CableTesterApplication:
     def __init__(self, root: tk.Tk):
+        self.version = "1.0.1"
         self.root = root
         self.root.title("Тестер жгутов")
         self.root.geometry("1280x1024")
@@ -77,7 +78,7 @@ class CableTesterApplication:
         self.align_dir_entry()
 
         # Initialize logs
-        self.log_info("Приложение запущено")
+        self.log_info(f"Приложение запущено. Версия {self.version}")
 
     def align_dir_entry(self, *args):
         self.dir_entry.xview_moveto(1)
